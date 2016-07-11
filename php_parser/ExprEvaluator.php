@@ -2,9 +2,7 @@
 
 class ExprEvaluator {
 
-  private $variables[];
-
-  
+  private $variables;
 
 
 }
