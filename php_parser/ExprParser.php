@@ -1,4 +1,6 @@
 <?php
+require 'ExpressionParseException.php';
+require 'ParseStack.php';
 
 class ExprParser {
 
@@ -57,7 +59,7 @@ class ExprParser {
 
 	}
 
-	function parseVariable(string $expr)throws ExpressionParseException {
+	function parseVariable(string $expr) throws ExpressionParseException {
 
 	}
 
@@ -72,43 +74,16 @@ class ExprParser {
 
 class ParentExpression {
 
-
 }
 
 class BooleanExpression {
-
 	$firstExpr = "";
-
 	$secondExpr = "";
-
 	$operator = "";
 }
 
 
 class VariableDeclaration {
-
 	$identifier = "";
-
 	$value = "";
-
-}
-
-class ExpressionParseException extends Exception {
-
-}
-
-class ParseStack {
-
-	private stackLevel;
-	private stackContents;
-
-	function pop(){
-
-	}
-
-  function push($contents) {
-      $this->stackLevel++;
-      array_push();
-
-  }
 }
