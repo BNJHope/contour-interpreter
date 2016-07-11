@@ -43,34 +43,34 @@ class ExprParser {
          * @var string
          * The first word in the line - determines the type of command that the line specifies.
          */
-		$expressionType = getType();
+		$expressionType = $this->getType();
 
         //depending on the first word of the expression, parse the part after that first word.
 		switch($expressionType) {
 			case $this->linestarts[0] :
 				try {
-                    $resultObject = $this->parseIf($statement = explode(" ", $expr, 2)[1];);
+                    $resultObject = $this->parseIf($statement = explode(" ", $expr, 2)[1]);
 				} catch(ExpressionParseException $e) {
 					throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
 				}
 				break;
 			case $this->linestarts[1] :
 				try {
-                    $resultObject = $this->parseThen($statement = explode(" ", $expr, 2)[1];);
+                    $resultObject = $this->parseThen($statement = explode(" ", $expr, 2)[1]);
 				} catch(ExpressionParseException $e) {
                     throw new ExpressionParseException("Parser failed to parse THEN statement - check syntax");
 				}
 				break;
 			case $this->linestarts[2] :
 				try {
-                    $resultObject = $this->parseElse($statement = explode(" ", $expr, 2)[1];);
+                    $resultObject = $this->parseElse($statement = explode(" ", $expr, 2)[1]);
 				} catch(ExpressionParseException $e) {
                     throw new ExpressionParseException("Parser failed to parse ELSE statement - check syntax");
 				}
 				break;
 			case $this->linestarts[3] :
 				try {
-                    $resultObject = $this->parseVariable($statement = explode(" ", $expr, 2)[1];);
+                    $resultObject = $this->parseVariable($statement = explode(" ", $expr, 2)[1]);
 				} catch(ExpressionParseException $e) {
                     throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
 				}
@@ -116,6 +116,8 @@ class ExprParser {
         while(!$this->stack->isEmpty()) {
             $contents = $this->stack
         }
+
+
     }
 
 	function parseIf() {
