@@ -43,7 +43,11 @@ class ExprParser {
          * @var string
          * The first word in the line - determines the type of command that the line specifies.
          */
-		$expressionType = $this->getType();
+        try {
+            $expressionType = $this->getType();
+        } catch (ExpressionParseException $e) {
+            throw new ExpressionParseException($e);
+        }
 
         //depending on the first word of the expression, parse the part after that first word.
 		switch($expressionType) {
@@ -104,35 +108,41 @@ class ExprParser {
          */
         $limit = count($this->exprArray);
 
-        while($spaceFound = false && $this->parseIndex < $limit) {
+        //push everything upto the first space onto the stack
+        while(!$spaceFound && $this->parseIndex < $limit) {
             $currentChar = $this->getNextChar();
             $this->stack->push();
             $spaceFound = $currentChar == " " ? true : false;
         }
 
+        /**
+         * If the loop terminated because the expression came to the end of the line then throw this exception.
+         */
+        if($this->parseIndex >= $limit) {
+            throw new ExpressionParseException("No keyword detected in expression - no spaces in line for parser to stop on.");
+        }
+
         //get the space character off the stack
         $this->stack->pop();
 
+        //get the key by popping every character off of the stack
+        //and forming a string from them.
         while(!$this->stack->isEmpty()) {
-            $contents = $this->stack
+            $result = $this->stack->pop() . $result;
         }
 
-
+        return $result;
     }
 
 	function parseIf() {
-        $statement_array = str_split($statement);
 
-        $boolResult = new BooleanExpression();
+        $result = new BooleanExpressionJoin();
+        $closeBracketFound = false;
 
-        for($i = 0; $i < count($statement_array); $i++) {
-            $charToAdd = $statement_array[$i];
-            if($charToAdd == "(") {
-                $this->stack->push($charToAdd);
-                $this->parseBool(array_shift($statement_array));
-            }
+        while(!$closeBracketFound) {
+            $currentChar = $this->getNextChar();
+            
         }
-
 	}
 
 	function parseThen() {
@@ -157,20 +167,4 @@ class ExprParser {
         return $charToReturn;
     }
 
-}
-
-class ParentExpression {
-
-}
-
-class BooleanExpression {
-	private $firstExpr = "";
-	private $secondExpr = "";
-	private $operator = "";
-}
-
-
-class VariableDeclaration {
-	private $identifier;
-	private $value;
 }
