@@ -13,4 +13,20 @@ class ResultObject
      * The result to be returned by the evaluator.
      */
     private $result;
+
+    /**
+     * @return string
+     */
+    public function getResult()
+    {
+        return $this->result;
+    }
+
+    /**
+     * @param string $result
+     */
+    public function setResult($result)
+    {
+        $this->result = $result;
+    }
 }

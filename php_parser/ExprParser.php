@@ -181,12 +181,12 @@ class ExprParser {
      */
 	function parseIf() {
 
-        /*
+        /**
          * The result to be returned from parsing the expression.
          */
         $result = new BooleanExpression();
 
-        /*
+        /**
          * Determines if the result expression is full or not.
          */
         $expressionComplete = false;
@@ -310,8 +310,17 @@ class ExprParser {
 	}
 
 
+    /**
+     * Parses a then statement and returns a result object from it.
+     * @return iExpression
+     * A parsed expression following the then statement.
+     * @throws ExpressionParseException
+     * If the expression is syntactically incorrect then this exception is thrown.
+     * @throws StackEmptyException
+     * If the stack is empty when the parser tries to pop from it then this exception is thrown.
+     */
 	function parseThen() {
-        /*
+        /**
          * Gets the statement to do after the then
          */
         $nextInstruction = $this->getType();
@@ -319,34 +328,34 @@ class ExprParser {
         /**
          * The object to be returned
          */
-        $resultObject
+        $resultObject = new ThenExpression();
 
         switch($nextInstruction) {
 
             //if it is another if statement
             case $this->linestarts[0] :
                 try {
-                    $resultObject = $this->parseIf();
+                    $resultObject->setSubExpression($this->parseIf());
                 } catch(ExpressionParseException $e) {
-                    throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
+                    throw new ExpressionParseException($e);
                 }
                 break;
 
             //if it is a variable declaration
             case $this->linestarts[3] :
                 try {
-                    $resultObject = $this->parseVariable();
+                    $resultObject->setSubExpression($this->parseVariable());
                 } catch(ExpressionParseException $e) {
-                    throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
+                    throw new ExpressionParseException($e);
                 }
                 break;
 
             //if it is a return statement
             case $this->linestarts[4] :
                 try {
-                    $resultObject = $this->parseReturn();
+                    $resultObject->setSubExpression($this->parseReturn());
                 } catch(ExpressionParseException $e) {
-                    throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
+                    throw new ExpressionParseException($e);
                 }
                 break;
             default :
@@ -357,11 +366,81 @@ class ExprParser {
 	}
 
 	function parseElse() {
+        /**
+         * Gets the statement to do after the then
+         */
+        $nextInstruction = $this->getType();
 
+        /**
+         * The object to be returned
+         */
+        $resultObject = new ElseExpression();
+
+        switch($nextInstruction) {
+
+            //if it is another if statement
+            case $this->linestarts[0] :
+                try {
+                    $resultObject->setSubExpression($this->parseIf());
+                } catch(ExpressionParseException $e) {
+                    throw new ExpressionParseException($e);
+                }
+                break;
+
+            //if it is a variable declaration
+            case $this->linestarts[3] :
+                try {
+                    $resultObject->setSubExpression($this->parseVariable());
+                } catch(ExpressionParseException $e) {
+                    throw new ExpressionParseException($e);
+                }
+                break;
+
+            //if it is a return statement
+            case $this->linestarts[4] :
+                try {
+                    $resultObject->setSubExpression($this->parseReturn());
+                } catch(ExpressionParseException $e) {
+                    throw new ExpressionParseException($e);
+                }
+                break;
+            default :
+                throw new ExpressionParseException("Invalid instruction following the THEN statement");
+        }
+
+        return $resultObject;
 	}
 
+    /**
+     * @return ResultObject
+     * @throws ExpressionParseException
+     */
     function parseReturn() {
 
+        /**
+         * The string to be returned.
+         * @var string
+         */
+        $result = new ResultObject();
+
+        /**
+         * The raw result to return.
+         */
+        $resString = "";
+
+        if(!$this->isNext()) {
+            throw new ExpressionParseException("Not given anything to return.");
+        }
+
+        //put the rest of the line as the result container
+        while(!$this->isNext()) {
+            $resString = $this->getNextChar() . $resString;
+        }
+
+        //make the result value the string from the stack.
+        $result->setResult($resString);
+        
+        return $result;
     }
 
     /**
