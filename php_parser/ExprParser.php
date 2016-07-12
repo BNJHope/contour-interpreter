@@ -412,8 +412,11 @@ class ExprParser {
 	}
 
     /**
+     * Parses a return statement.
      * @return ResultObject
+     * The result object parsed from this method.
      * @throws ExpressionParseException
+     * This is thrown when there is a syntax error of some description.
      */
     function parseReturn() {
 
@@ -439,7 +442,7 @@ class ExprParser {
 
         //make the result value the string from the stack.
         $result->setResult($resString);
-        
+
         return $result;
     }
 
