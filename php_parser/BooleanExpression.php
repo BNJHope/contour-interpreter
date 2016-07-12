@@ -74,6 +74,12 @@ class BooleanExpression implements iExpression {
         $this->operator = $operator;
     }
 
+    public function __toString()
+    {
+        return $this->firstExpr->__toString() . " " . $this->operator . " " . $this->secondExpr->__toString();
+    }
+
+
     public function evaluate(){
 
     }

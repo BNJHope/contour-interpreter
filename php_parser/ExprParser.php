@@ -18,7 +18,7 @@ class ExprParser {
      * @var array
      * Words at the start of lines that determine what type of command is being called.
      */
-	private $linestarts = array("if", "then", "else", "let");
+	private $linestarts = array("if", "then", "else", "let", "return");
 
     /**
      * @var array
@@ -48,6 +48,8 @@ class ExprParser {
      * Parses a line of the function that is passed to the program.
      * @param $expr
      * The expression to be parsed
+     * @return iExpression
+     * Expression object which can be evaluated
      * @throws ExpressionParseException
      * If the expression is syntactically invalid, this exception is thrown.
      */
@@ -84,28 +86,28 @@ class ExprParser {
 				try {
                     $resultObject = $this->parseIf();
 				} catch(ExpressionParseException $e) {
-					throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
+					throw new ExpressionParseException($e);
 				}
 				break;
 			case $this->linestarts[1] :
 				try {
                     $resultObject = $this->parseThen();
 				} catch(ExpressionParseException $e) {
-                    throw new ExpressionParseException("Parser failed to parse THEN statement - check syntax");
+                    throw new ExpressionParseException($e);
 				}
 				break;
 			case $this->linestarts[2] :
 				try {
                     $resultObject = $this->parseElse();
 				} catch(ExpressionParseException $e) {
-                    throw new ExpressionParseException("Parser failed to parse ELSE statement - check syntax");
+                    throw new ExpressionParseException($e);
 				}
 				break;
 			case $this->linestarts[3] :
 				try {
                     $resultObject = $this->parseVariable();
 				} catch(ExpressionParseException $e) {
-                    throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
+                    throw new ExpressionParseException($e);
 				}
 				break;
             default :
@@ -286,14 +288,20 @@ class ExprParser {
             }
         }
 
+        //if the parser reaches the end of the line and the operator and first expression are full and the second one is empty
+        //then fill the second expression with the contents of the stack up to the first opening bracket or until the stack is empty
         if(!$this->isNext() && $result->getFirstExpr() != null && $result->getOperator() != null && $result->getSecondExpr() == null) {
                 $exprToAdd = "";
                 while(!$this->stack->isEmpty() && $this->stack->top() != "(") {
                     $exprToAdd = $this->stack->pop() . $exprToAdd;
                 }
                 $result->setSecondExpr(new RawValueExpression($exprToAdd));
+
+        //if all the terms are full then just return the result
         } else if ($result->getFirstExpr() != null && $result->getSecondExpr() != null && $result->getOperator() != null) {
             //do nothing - just makes sure that this correct case does not throw exceptions
+
+        //if there is a null term then throw a parse exception
         } else {
             throw new ExpressionParseException("Some values missing in expression : " . $result->getFirstExpr() . " " . $result->getOperator() . " " . $result->getSecondExpr());
         }
@@ -301,13 +309,60 @@ class ExprParser {
         return $result;
 	}
 
-	function parseThen() {
 
+	function parseThen() {
+        /*
+         * Gets the statement to do after the then
+         */
+        $nextInstruction = $this->getType();
+
+        /**
+         * The object to be returned
+         */
+        $resultObject
+
+        switch($nextInstruction) {
+
+            //if it is another if statement
+            case $this->linestarts[0] :
+                try {
+                    $resultObject = $this->parseIf();
+                } catch(ExpressionParseException $e) {
+                    throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
+                }
+                break;
+
+            //if it is a variable declaration
+            case $this->linestarts[3] :
+                try {
+                    $resultObject = $this->parseVariable();
+                } catch(ExpressionParseException $e) {
+                    throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
+                }
+                break;
+
+            //if it is a return statement
+            case $this->linestarts[4] :
+                try {
+                    $resultObject = $this->parseReturn();
+                } catch(ExpressionParseException $e) {
+                    throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
+                }
+                break;
+            default :
+                throw new ExpressionParseException("Invalid instruction following the THEN statement");
+        }
+
+        return $resultObject;
 	}
 
 	function parseElse() {
 
 	}
+
+    function parseReturn() {
+
+    }
 
     /**
      * Parses the line as a variable

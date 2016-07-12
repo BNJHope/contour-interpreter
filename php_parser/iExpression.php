@@ -8,4 +8,5 @@
  */
 interface iExpression {
     public function evaluate();
+    public function __toString();
 }

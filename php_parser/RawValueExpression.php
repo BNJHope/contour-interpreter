@@ -17,7 +17,12 @@ class RawValueExpression implements iExpression
     function __construct($value) {
         $this->$value = value;
     }
-    
+
+    public function __toString()
+    {
+       return $this->value;
+    }
+
     /**
      * @return string
      */

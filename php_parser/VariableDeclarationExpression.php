@@ -54,4 +54,9 @@ class VariableDeclarationExpression implements iExpression {
     public function evaluate(){
 
     }
+
+    public function __toString()
+    {
+        return $this->identifier . " = " . $this->value;
+    }
 }
