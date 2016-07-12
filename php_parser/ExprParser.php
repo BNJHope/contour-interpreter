@@ -82,28 +82,28 @@ class ExprParser {
 		switch($expressionType) {
 			case $this->linestarts[0] :
 				try {
-                    $resultObject = $this->parseIf($statement = explode(" ", $expr, 2)[1]);
+                    $resultObject = $this->parseIf();
 				} catch(ExpressionParseException $e) {
 					throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
 				}
 				break;
 			case $this->linestarts[1] :
 				try {
-                    $resultObject = $this->parseThen($statement = explode(" ", $expr, 2)[1]);
+                    $resultObject = $this->parseThen();
 				} catch(ExpressionParseException $e) {
                     throw new ExpressionParseException("Parser failed to parse THEN statement - check syntax");
 				}
 				break;
 			case $this->linestarts[2] :
 				try {
-                    $resultObject = $this->parseElse($statement = explode(" ", $expr, 2)[1]);
+                    $resultObject = $this->parseElse();
 				} catch(ExpressionParseException $e) {
                     throw new ExpressionParseException("Parser failed to parse ELSE statement - check syntax");
 				}
 				break;
 			case $this->linestarts[3] :
 				try {
-                    $resultObject = $this->parseVariable($statement = explode(" ", $expr, 2)[1]);
+                    $resultObject = $this->parseVariable();
 				} catch(ExpressionParseException $e) {
                     throw new ExpressionParseException("Parser failed to parse IF statement - check syntax");
 				}
@@ -112,9 +112,18 @@ class ExprParser {
                 throw new ExpressionParseException("Parser failed to recognise command keyword - check first word");
 		}
 
-
+        return $resultObject;
 	}
 
+    /**
+     * Gets the type of the current line to be parsed.
+     * @return string
+     * The type of the line that is being parsed.
+     * @throws ExpressionParseException
+     * If the line is syntactically incorrect, this exception is thrown.
+     * @throws StackEmptyException
+     * If there is an attempt to pop from the top of stack when it is empty then this is thrown.
+     */
     function getType() {
 
         /**
@@ -140,13 +149,11 @@ class ExprParser {
         //push everything upto the first space onto the stack
         while(!$spaceFound && $this->parseIndex < $limit) {
             $currentChar = $this->getNextChar();
-            $this->stack->push();
+            $this->stack->push($currentChar);
             $spaceFound = $currentChar == " " ? true : false;
         }
 
-        /**
-         * If the loop terminated because the expression came to the end of the line then throw this exception.
-         */
+        //if the loop terminated because the expression came to the end of the line then throw this exception.
         if($this->parseIndex >= $limit) {
             throw new ExpressionParseException("No keyword detected in expression - no spaces in line for parser to stop on.");
         }
@@ -163,40 +170,135 @@ class ExprParser {
         return $result;
     }
 
+    /**
+     * Parses an if statement in the grammar.
+     * @throws ExpressionParseException
+     * If the statement is syntactically incorrect, then this exception is thrown.
+     * @throws StackEmptyException
+     * If the parser tries to pop off the top of the stack when it is empty then this exception is thrown.
+     */
 	function parseIf() {
 
+        /*
+         * The result to be returned from parsing the expression.
+         */
         $result = new BooleanExpression();
-        while($this->isNext()) {
+
+        /*
+         * Determines if the result expression is full or not.
+         */
+        $expressionComplete = false;
+
+        //while there are still characters to be parsed
+        //or the expression is not yet complete
+        while($this->isNext() && !$expressionComplete) {
+
+            //get the next char in the stream
             $currentChar = $this->getNextChar();
+
+            //decide what to do next depending on what that character is
             switch($currentChar) {
 
-                //start the function on the new
+                //parse the sub expression recursively if its an open bracket
                 case "(" :
-                    if($result->getFirstExpr() == null) $result->setFirstExpr($this->parseIf());
-                    else $result->setSecondExpr($this->parseIf());
+                    if($result->getFirstExpr() == null) {
+
+                        //try to set the first expression of the result to this subexpression
+                        try {
+                            $result->setFirstExpr($this->parseIf());
+                        } catch (ExpressionParseException $e) {
+                            throw new ExpressionParseException ($e);
+                        } catch (StackEmptyException $e) {
+                            throw new StackEmptyException($e);
+                        }
+                    }
+
+                    elseif ($result->getSecondExpr() == null) {
+
+                        //try to set the second expression of the result to this subexpression
+                        try {
+                            $result->setSecondExpr($this->parseIf());
+                        } catch (ExpressionParseException $e) {
+                            throw new ExpressionParseException ($e);
+                        } catch (StackEmptyException $e) {
+                            throw new StackEmptyException($e);
+                        }
+
+                        //expression now full - exit the parsing
+                        $expressionComplete = true;
+                    }
+
+                    else
+                        //throw exception if there are problems
+                        throw new ExpressionParseException("Error on open bracket");
                     break;
 
                 case " " :
+                    //set the expression to add back to empty so it can be filled
                     $exprToAdd = "";
+
+                    //while the top of the stack is not an open bracket and while the stack is not empty
                     while($this->stack->top() != "(" && !$this->stack->isEmpty()) {
+
+                        //pop off the top of the stack into the expression to add string
                         $exprToAdd = $this->stack->pop() . $exprToAdd;
                     }
-                    if($result->getFirstExpr() == null) $result->setFirstExpr($exprToAdd);
-                    elseif ($result->getOperator() == null) $result->setOperator($exprToAdd);
-                    elseif ($result->getSecondExpr() == null) $result->setSecondExpr($exprToAdd);
-                    else throw new ExpressionParseException("Illegal space character found after " . $exprToAdd);
+
+                    //if the first expression is empty then use this result to fill it
+                    if($result->getFirstExpr() == null)
+                        $result->setFirstExpr(new RawValueExpression($exprToAdd));
+
+                    //if the first expression is not empty but the operator is then fill it
+                    elseif ($result->getOperator() == null)
+                        $result->setOperator($exprToAdd);
+
+                    //if the first expression and operator are not empty but the second expression is then fill it
+                    elseif ($result->getSecondExpr() == null) {
+                        $result->setSecondExpr(new RawValueExpression($exprToAdd));
+                        $expressionComplete = true;
+                    }
+                    else
+                        throw new ExpressionParseException("Illegal space character found after " . $exprToAdd);
                     break;
 
                 case ")" :
+                    //set the expression to add back to empty so it can be filled
                     $exprToAdd = "";
+
+                    //while the top of the stack is not an open bracket and while the stack is not empty
                     while($this->stack->top() != "(" && !$this->stack->isEmpty()) {
                         $exprToAdd = $this->stack->pop() . $exprToAdd;
                     }
+
                     if($this->stack->isEmpty())
                         throw new ExpressionParseException("Closed bracket found, no matching open bracket found before " . $exprToAdd . ".");
+                    if($result->getFirstExpr() != null && $result->getOperator() != null && $result->getSecondExpr() == null){
+                        $result->setSecondExpr(new RawValueExpression($exprToAdd));
+                        $expressionComplete = true;
+                    } else
+                        throw new ExpressionParseException("Illegal close bracket - closes before expression is finished.");
+                    break;
 
+                //if its not a special character, just add it to the stack
+                default :
+                    $this->stack->push($currentChar);
+                    break;
             }
         }
+
+        if(!$this->isNext() && $result->getFirstExpr() != null && $result->getOperator() != null && $result->getSecondExpr() == null) {
+                $exprToAdd = "";
+                while(!$this->stack->isEmpty() && $this->stack->top() != "(") {
+                    $exprToAdd = $this->stack->pop() . $exprToAdd;
+                }
+                $result->setSecondExpr(new RawValueExpression($exprToAdd));
+        } else if ($result->getFirstExpr() != null && $result->getSecondExpr() != null && $result->getOperator() != null) {
+            //do nothing - just makes sure that this correct case does not throw exceptions
+        } else {
+            throw new ExpressionParseException("Some values missing in expression : " . $result->getFirstExpr() . " " . $result->getOperator() . " " . $result->getSecondExpr());
+        }
+
+        return $result;
 	}
 
 	function parseThen() {
