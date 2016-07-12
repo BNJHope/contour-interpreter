@@ -58,6 +58,10 @@ class ParseStack {
     public function isEmpty() {
         return $this->isEmpty;
     }
+
+    public function top() {
+        return $this->contents[$this->size - 1];
+    }
 }
 
 class StackEmptyException extends Exception {

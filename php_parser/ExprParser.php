@@ -136,12 +136,30 @@ class ExprParser {
 
 	function parseIf() {
 
-        $result = new BooleanExpressionJoin();
+        $result = new BooleanExpression();
         $closeBracketFound = false;
-
         while(!$closeBracketFound) {
             $currentChar = $this->getNextChar();
-            
+            switch($currentChar) {
+                case "(" :
+                    if($result->getFirstExpr() == null) $result->setFirstExpr($this->parseIf());
+                    else $result->setSecondExpr($this->parseIf());
+                    break;
+                case " " :
+                    $exprToAdd = "";
+                    while($this->stack->top() != "(" && !$this->stack->isEmpty()) {
+                        $exprToAdd = $this->stack->pop() . $exprToAdd;
+                    }
+                    if($result->getFirstExpr() == null) $result->setFirstExpr($exprToAdd);
+                    elseif ($result->getOperator() == null) $result->setOperator($exprToAdd);
+                    else throw new ExpressionParseException("Illegal space character found after " . $exprToAdd);
+                    break;
+                case ")" :
+                    $exprToAdd = "";
+                    while($this->stack->top() != "(" && !$this->stack->isEmpty()) {
+                        $exprToAdd = $this->stack->pop() . $exprToAdd;
+                    }
+            }
         }
 	}
 
@@ -149,17 +167,14 @@ class ExprParser {
 
 	}
 
-	function parseVariable() {
-
-	}
-
 	function parseElse() {
 
 	}
 
-	function parseBool() {
 
-	}
+    function parseVariable() {
+
+    }
 
     function getNextChar(){
         $charToReturn = $this->exprArray[$this->parseIndex];
