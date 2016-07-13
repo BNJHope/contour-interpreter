@@ -8,6 +8,19 @@
  */
 class ResultObject implements iExpression
 {
+
+    /**
+     * @var string
+     * The result to be returned by the evaluator.
+     */
+    private $result;
+
+    public static function withValue($value) {
+        $instance = new self();
+        $instance->setResult($value);
+        return $instance;
+    }
+
     public function evaluate()
     {
         // TODO: Implement evaluate() method.
@@ -18,11 +31,7 @@ class ResultObject implements iExpression
         return "return : " . $this->result;
     }
 
-    /**
-     * @var string
-     * The result to be returned by the evaluator.
-     */
-    private $result;
+
 
     /**
      * @return string

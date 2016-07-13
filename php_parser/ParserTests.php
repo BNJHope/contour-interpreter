@@ -6,6 +6,8 @@ include 'BooleanExpression.php';
 include 'RawValueExpression.php';
 include 'OperationExpression.php';
 include 'VariableDeclarationExpression.php';
+include 'ResultObject.php';
+include 'ThenExpression.php';
 
 /**
  * Created by PhpStorm.
@@ -58,6 +60,18 @@ class ParserTests extends TestCase
      * Tests if a basic variable declaration works
      */
     private static $letValidStatement = "let test = 4";
+
+    /**
+     * @var string
+     * Tests if a basic valid return statement works
+     */
+    private static $returnValidStatement = "return house";
+
+    /**
+     * @var string
+     * Tests if a basic valid then-return statement works
+     */
+    private static $thenValidStatement = "then return house";
 
     /**
      * Constructs the parser to be used in the tests before they begin.
@@ -134,4 +148,17 @@ class ParserTests extends TestCase
         $this->assertEquals($objToTest, self::$parser->parse(self::$letValidStatement));
     }
 
+    public function testIfValidReturnStatement() {
+        $objToTest = ResultObject::withValue("house");
+
+        $this->assertEquals($objToTest, self::$parser->parse(self::$returnValidStatement));
+
+    }
+
+    public function testIfValidThenReturnStatement() {
+        $resObj = ResultObject::withValue("house");
+        $objToTest = ThenExpression::withValue($resObj);
+
+        $this->assertEquals($objToTest, self::$parser->parse(self::$thenValidStatement));
+    }
 }

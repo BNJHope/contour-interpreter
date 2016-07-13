@@ -103,8 +103,14 @@ class ExprParser {
                     throw new ExpressionParseException($e);
 				}
 				break;
+            case $this->linestarts[4] :
+                try {
+                $resultObject = $this->parseReturn();
+                } catch(ExpressionParseException $e) {
+                    throw new ExpressionParseException($e);
+                }
+                break;
             default :
-                $test = "";
                 throw new ExpressionParseException("Parser failed to recognise command keyword - check first word");
 		}
 
@@ -221,7 +227,6 @@ class ExprParser {
 
                         //try to set the second expression of the result to this subexpression
                         try {
-                            $test = "";
                             $result->setSecondExpr($this->parseIf());
                         } catch (ExpressionParseException $e) {
                             throw new ExpressionParseException ($e);
@@ -258,8 +263,6 @@ class ExprParser {
                         $exprToAdd = $this->stack->pop() . $exprToAdd;
 
                     }
-
-                    $test="";
 
                     //if a bracketed statement has just been resolved then a property has already been filled
                     //and so does not need any further action.
@@ -466,8 +469,8 @@ class ExprParser {
         }
 
         //put the rest of the line as the result container
-        while(!$this->isNext()) {
-            $resString = $this->getNextChar() . $resString;
+        while($this->isNext()) {
+            $resString = $resString . $this->getNextChar();
         }
 
         //make the result value the string from the stack.

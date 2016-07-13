@@ -8,11 +8,18 @@
  */
 class ThenExpression implements iExpression
 {
+
     /**
      * @var iExpression
      * The expression that will occur after the then statement.
      */
     private $subExpression;
+
+    public static function withValue($value) {
+        $instance = new self;
+        $instance->setSubExpression($value);
+        return $instance;
+    }
 
     /**
      * @return iExpression
