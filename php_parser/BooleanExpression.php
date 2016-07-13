@@ -27,7 +27,7 @@ class BooleanExpression implements iExpression {
      */
     private $operator;
 
-    public static function withValues(iExpression $firstExpr, iExpression $operator, iExpression $secondExpr) {
+    public static function withValues(iExpression $firstExpr, iExpression $operator = null, iExpression $secondExpr = null) {
         $instance = new self();
         $instance->setFirstExpr($firstExpr);
         $instance->setOperator($operator);

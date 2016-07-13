@@ -26,37 +26,108 @@ class ParserTests extends TestCase
      * @var string
      * Test for a basic valid if statement.
      */
-    private static $ifValidBasicInt = "if 7 = 7";
+    private static $ifValidBasicInt = "if 7 = 8";
 
 
     /**
      * @var string
      * Test for a bracketed valid if statement.
      */
-    private static $ifValidBracket1Int = "if (7 = 7)";
+    private static $ifValidBracket1Int = "if (7 = 8)";
 
     /**
      * @var string
      * Test for another bracketed valid if statement
      */
-    private static $ifValidBracket2Int = "if (7) = (7)";
+    private static $ifValidBracket2Int = "if (7) = (8)";
 
     /**
-     *
+     * @var string
+     * Test for another bracketed valid if statement
+     */
+    private static $ifValidBracket3Int = "if (7 = 8) & (9 = 10)";
+
+    /**
+     * @var string
+     * Tests if a nested bracketed if statement works.
+     */
+    private static $ifNestedBracketMixed = "if ((\"house\" = 8) & 1) > ((\"money\" < 2) | (\"trees\" = 8))";
+
+    /**
+     * @var string
+     * Tests if a basic variable declaration works
      */
     private static $letValidStatement = "let test = 4";
 
+    /**
+     * Constructs the parser to be used in the tests before they begin.
+     */
     public static function setUpBeforeClass()
     {
         self::$parser = new ExprParser();
     }
 
+    /**
+     * Tests if "if 7 = 7" returns as expected
+     */
     public function testIfValidBasicInt() {
-        $objToTest = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="),new RawValueExpression("7"));
+        $objToTest = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="),new RawValueExpression("8"));
 
         $this->assertEquals($objToTest, self::$parser->parse(self::$ifValidBasicInt));
     }
 
+    /**
+     * Tests if "if (7 = 8)" returns as expected
+     */
+    public function testIfValidBracket1Int() {
+        $subobj = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="), new RawValueExpression("8"));
+        $objToTest = BooleanExpression::withValues($subobj);
+
+        $this->assertEquals($objToTest, self::$parser->parse(self::$ifValidBracket1Int));
+    }
+
+    /**
+     * Tests if "if (7) = (8)" returns as expected
+     */
+    public function testIfValidBracket2Int() {
+        $subobj1 = BooleanExpression::withValues(new RawValueExpression("7"));
+        $subobj2 = BooleanExpression::withValues(new RawValueExpression("8"));
+
+        $objToTest = BooleanExpression::withValues($subobj1, new OperationExpression("="), $subobj2);
+
+        $this->assertEquals($objToTest, self::$parser->parse(self::$ifValidBracket2Int));
+    }
+
+    /**
+     * Tests if "if (7 = 8) & (9 = 10)" returns as expected
+     */
+    public function testIfValidBracket3Int() {
+        $subobj1 = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="), new RawValueExpression("8"));
+        $subobj2 = BooleanExpression::withValues(new RawValueExpression("9"), new OperationExpression("="), new RawValueExpression("10"));
+
+        $objToTest = BooleanExpression::withValues($subobj1, new OperationExpression("&"), $subobj2);
+
+        $this->assertEquals($objToTest, self::$parser->parse(self::$ifValidBracket3Int));
+    }
+
+    /**
+     * Tests if "if (("house" = 8) & 1) > (("money" < 2) | ("trees" = 8))" returns as expected
+     */
+    public function testMixedNested() {
+        $subobj1 = BooleanExpression::withValues(new RawValueExpression("\"house\""), new OperationExpression("="), new RawValueExpression("8"));
+        $subobj2 = BooleanExpression::withValues($subobj1,new OperationExpression("&"), new RawValueExpression("1"));
+
+        $subobj3 = BooleanExpression::withValues(new RawValueExpression("\"money\""), new OperationExpression("<"), new RawValueExpression("2"));
+        $subobj4 = BooleanExpression::withValues(new RawValueExpression("\"trees\""), new OperationExpression("="), new RawValueExpression("8"));
+        $subobj5 = BooleanExpression::withValues($subobj3, new OperationExpression("|"), $subobj4);
+        $objToTest = BooleanExpression::withValues($subobj2, new OperationExpression(">"), $subobj5);
+
+        $this->assertEquals($objToTest, self::$parser->parse(self::$ifNestedBracketMixed));
+    }
+
+    /**
+     * Tests if "let test = 4" returns as expected
+     */
     public function testIfValidVariableStatement() {
         $objToTest = VariableDeclarationExpression::withValues(new RawValueExpression("test"), new RawValueExpression("4"));
 

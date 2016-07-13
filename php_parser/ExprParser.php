@@ -104,6 +104,7 @@ class ExprParser {
 				}
 				break;
             default :
+                $test = "";
                 throw new ExpressionParseException("Parser failed to recognise command keyword - check first word");
 		}
 
@@ -196,8 +197,14 @@ class ExprParser {
             //decide what to do next depending on what that character is
             switch($currentChar) {
 
+                //parses tags
+                case "#" :
+
                 //parse the sub expression recursively if its an open bracket
                 case "(" :
+                    //add open bracket to the stack
+                    $this->stack->push($currentChar);
+
                     if($result->getFirstExpr() == null) {
 
                         //try to set the first expression of the result to this subexpression
@@ -214,6 +221,7 @@ class ExprParser {
 
                         //try to set the second expression of the result to this subexpression
                         try {
+                            $test = "";
                             $result->setSecondExpr($this->parseIf());
                         } catch (ExpressionParseException $e) {
                             throw new ExpressionParseException ($e);
@@ -228,9 +236,18 @@ class ExprParser {
                     else
                         //throw exception if there are problems
                         throw new ExpressionParseException("Error on open bracket");
+
+                    //if the open bracket is the last character on the stack then pop it off
+                    if($this->stack->top() == "(")
+                        $this->stack->pop();
+
+                        //otherwise throw a parse exception
+                    else
+                        throw new ExpressionParseException("Error on brackets");
                     break;
 
                 case " " :
+
                     //set the expression to add back to empty so it can be filled
                     $exprToAdd = "";
 
@@ -241,6 +258,12 @@ class ExprParser {
                         $exprToAdd = $this->stack->pop() . $exprToAdd;
 
                     }
+
+                    $test="";
+
+                    //if a bracketed statement has just been resolved then a property has already been filled
+                    //and so does not need any further action.
+                    if($this->previousTokenIsCloseBracket()) break;
 
                     //if the first expression is empty then use this result to fill it
                     if($result->getFirstExpr() == null)
@@ -270,8 +293,12 @@ class ExprParser {
 
                     if($this->stack->isEmpty())
                         throw new ExpressionParseException("Closed bracket found, no matching open bracket found before " . $exprToAdd . ".");
+
                     if($result->getFirstExpr() != null && $result->getOperator() != null && $result->getSecondExpr() == null){
                         $result->setSecondExpr(new RawValueExpression($exprToAdd));
+                        $expressionComplete = true;
+                    } else if($result->getFirstExpr() == null) {
+                        $result->setFirstExpr(new RawValueExpression($exprToAdd));
                         $expressionComplete = true;
                     } else
                         throw new ExpressionParseException("Illegal close bracket - closes before expression is finished.");
@@ -476,8 +503,6 @@ class ExprParser {
             //get the next character in the line
             $currentChar = $this->getNextChar();
 
-            $test = "";
-
             //if it is a space character then find fill in what part of the variable declaration it is
             if($currentChar == " ") {
 
@@ -488,8 +513,6 @@ class ExprParser {
                 while(!$this->stack->isEmpty()) {
                     $exprToAdd = $this->stack->pop() . $exprToAdd;
                 }
-
-                $test = "";
 
                 //if there is no variable identifier in the variable declaration expression
                 //then the expression to add must be that identifier
@@ -538,7 +561,17 @@ class ExprParser {
     }
 
     /**
-     * @return mixed
+     * Determines if the previous token in the string is a closed bracket or not to see if a space should be ignored
+     * when parsing if statements with bracketed statements.
+     * @return bool
+     */
+    function previousTokenIsCloseBracket() {
+        $previousTokenChar = $this->exprArray[$this->parseIndex - 2];
+        return $previousTokenChar == ")";
+    }
+
+    /**
+     * @return string
      * Gets the next character in the expression.
      */
     function getNextChar(){
