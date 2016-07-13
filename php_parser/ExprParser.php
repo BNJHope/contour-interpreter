@@ -1,7 +1,6 @@
 <?php
 require 'ExpressionParseException.php';
 require 'ParseStack.php';
-
 class ExprParser {
 
     /**
@@ -19,12 +18,6 @@ class ExprParser {
      * Words at the start of lines that determine what type of command is being called.
      */
 	private $linestarts = array("if", "then", "else", "let", "return");
-
-    /**
-     * @var array
-     * Signs that represent boolean operations between expressions.
-     */
-	private $boolOps = array('=', '>', '<', '&', '|', '!');
 
     /**
      * @var string
@@ -198,6 +191,8 @@ class ExprParser {
             //get the next char in the stream
             $currentChar = $this->getNextChar();
 
+
+
             //decide what to do next depending on what that character is
             switch($currentChar) {
 
@@ -240,10 +235,11 @@ class ExprParser {
                     $exprToAdd = "";
 
                     //while the top of the stack is not an open bracket and while the stack is not empty
-                    while($this->stack->top() != "(" && !$this->stack->isEmpty()) {
+                    while(!$this->stack->isEmpty() && $this->stack->top() != "(") {
 
                         //pop off the top of the stack into the expression to add string
                         $exprToAdd = $this->stack->pop() . $exprToAdd;
+
                     }
 
                     //if the first expression is empty then use this result to fill it
@@ -252,7 +248,7 @@ class ExprParser {
 
                     //if the first expression is not empty but the operator is then fill it
                     elseif ($result->getOperator() == null)
-                        $result->setOperator($exprToAdd);
+                        $result->setOperator(new OperationExpression($exprToAdd));
 
                     //if the first expression and operator are not empty but the second expression is then fill it
                     elseif ($result->getSecondExpr() == null) {
@@ -288,17 +284,24 @@ class ExprParser {
             }
         }
 
+        //if the loop is done and there are still things left to parse
+        //then either empty the stack or empty it to the first open bracket
+        //so that it can be added to the expression
+        $exprToAdd = "";
+        while(!$this->stack->isEmpty() && $this->stack->top() != "(") {
+            $exprToAdd = $this->stack->pop() . $exprToAdd;
+        }
+
         //if the parser reaches the end of the line and the operator and first expression are full and the second one is empty
         //then fill the second expression with the contents of the stack up to the first opening bracket or until the stack is empty
-        if(!$this->isNext() && $result->getFirstExpr() != null && $result->getOperator() != null && $result->getSecondExpr() == null) {
-                $exprToAdd = "";
-                while(!$this->stack->isEmpty() && $this->stack->top() != "(") {
-                    $exprToAdd = $this->stack->pop() . $exprToAdd;
-                }
+        if($result->getFirstExpr() != null && $result->getOperator() != null && $result->getSecondExpr() == null) {
                 $result->setSecondExpr(new RawValueExpression($exprToAdd));
-
         //if all the terms are full then just return the result
-        } else if ($result->getFirstExpr() != null && $result->getSecondExpr() != null && $result->getOperator() != null) {
+        } elseif ($result->getFirstExpr() != null && $result->getSecondExpr() != null && $result->getOperator() != null) {
+            //do nothing - just makes sure that this correct case does not throw exceptions
+
+        //if only the first expression is filled and nothing else
+        } elseif ($result->getFirstExpr() != null && $result->getSecondExpr() == null && $result->getOperator() == null) {
             //do nothing - just makes sure that this correct case does not throw exceptions
 
         //if there is a null term then throw a parse exception
@@ -473,6 +476,8 @@ class ExprParser {
             //get the next character in the line
             $currentChar = $this->getNextChar();
 
+            $test = "";
+
             //if it is a space character then find fill in what part of the variable declaration it is
             if($currentChar == " ") {
 
@@ -484,10 +489,12 @@ class ExprParser {
                     $exprToAdd = $this->stack->pop() . $exprToAdd;
                 }
 
+                $test = "";
+
                 //if there is no variable identifier in the variable declaration expression
                 //then the expression to add must be that identifier
                 if($result->getIdentifier() == null)
-                    $result->setIdentifier($exprToAdd);
+                    $result->setIdentifier(new RawValueExpression($exprToAdd));
 
                 //if it is the equals symbol then ignore it
                 elseif($exprToAdd == "=") {}
@@ -496,7 +503,7 @@ class ExprParser {
                 //and that the expression to add is not the equals sign
                 //then it must be the value of the variable
                 elseif($result->getValue() == null) {
-                    $result->setValue($exprToAdd);
+                    $result->setValue(new RawValueExpression($exprToAdd));
 
                     //the set is complete - break from the parsing
                     break;
@@ -504,7 +511,26 @@ class ExprParser {
 
                 //if there are parsing issues, throw an exception
                 else throw new ExpressionParseException("Error when declaring variable");
+
+                //if it isn't a space character, push it onto the stack
+            } else {
+                $this->stack->push($currentChar);
             }
+        }
+
+        //if the loop is done and there are still things left to parse
+        //then either empty the stack or empty it to the first open bracket
+        //so that it can be added to the expression
+        $exprToAdd = "";
+        while(!$this->stack->isEmpty() && $this->stack->top() != "(") {
+            $exprToAdd = $this->stack->pop() . $exprToAdd;
+        }
+
+        //if there is an identifier but no value then set the value as the leftover string
+        if($result->getIdentifier() != null && $result->getValue() == null) {
+            $result->setValue(new RawValueExpression($exprToAdd));
+        } else {
+            throw new ExpressionParseException("Invalid variable declaration.");
         }
 
         //return the resulting structure
@@ -526,6 +552,6 @@ class ExprParser {
      * Checks if there is still more characters in the expression to be parsed.
      */
     function isNext() {
-        return $this->parseIndex < (count($this->exprArray) - 1);
+        return $this->parseIndex < (count($this->exprArray));
     }
 }

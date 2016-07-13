@@ -9,14 +9,21 @@
 class VariableDeclarationExpression implements iExpression {
 
     /**
-     * @var string
+     * @var iExpression
      */
     private $identifier;
 
     /**
-     * @var mixed
+     * @var iExpression
      */
     private $value;
+
+    public static function withValues($key, $value) {
+        $instance = new self();
+        $instance->setIdentifier($key);
+        $instance->setValue($value);
+        return $instance;
+    }
 
     /**
      * @return string
@@ -52,7 +59,7 @@ class VariableDeclarationExpression implements iExpression {
 
 
     public function evaluate(){
-
+            //TODO : implement
     }
 
     public function __toString()

@@ -18,16 +18,10 @@ class ParseStack {
 	private $stackContents;
 
     /**
-     * @var bool
-     * Determines whether the stack is empty or not.
-     */
-    private $isEmpty;
-
-    /**
      * ParseStack constructor
      */
     function __construct() {
-        $this->isEmpty = true;
+        $this->stackContents = [];
     }
 
     /**
@@ -36,31 +30,31 @@ class ParseStack {
      * Pops first element off of the stack.
      */
 	public function pop() {
-        if($this->isEmpty) {
+        if(empty($this->stackContents)) {
           throw new StackEmptyException();
         } else {
           $this->size--;
-            if($this->size == 0) $this->isEmpty = true;
           return array_pop($this->stackContents);
         }
 	}
 
     /**
-     * @param $contents The contents to be pushed onto the stack
      * Pushes the given contents onto the top of the stack.
+     * @param $contents
+     * The contents to be pushed onto the stack.
      */
   public function push($contents) {
       $this->size++;
       array_push($this->stackContents, $contents);
-      $this->isEmpty = false;
   }
 
     public function isEmpty() {
-        return $this->isEmpty;
+        return empty($this->stackContents);
     }
 
     public function top() {
-        return $this->contents[$this->size - 1];
+        if(empty($this->stackContents)) return null;
+        else return $this->stackContents[$this->size - 1];
     }
 }
 

@@ -6,8 +6,18 @@
  * Date: 11/07/2016
  * Time: 10:57
  */
-class ResultObject
+class ResultObject implements iExpression
 {
+    public function evaluate()
+    {
+        // TODO: Implement evaluate() method.
+    }
+
+    public function __toString()
+    {
+        return "return : " . $this->result;
+    }
+
     /**
      * @var string
      * The result to be returned by the evaluator.

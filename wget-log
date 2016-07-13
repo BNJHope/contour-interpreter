@@ -1,0 +1,15 @@
+--2016-07-13 10:22:02--  https://phar.phpunit.de/phpunit.phar
+Resolving phar.phpunit.de (phar.phpunit.de)... 188.94.27.25
+Connecting to phar.phpunit.de (phar.phpunit.de)|188.94.27.25|:443... connected.
+HTTP request sent, awaiting response... 302 Moved Temporarily
+Location: https://phar.phpunit.de/phpunit-5.4.6.phar [following]
+--2016-07-13 10:22:07--  https://phar.phpunit.de/phpunit-5.4.6.phar
+Reusing existing connection to phar.phpunit.de:443.
+HTTP request sent, awaiting response... 200 OK
+Length: 2988429 (2.8M) [application/octet-stream]
+Saving to: ‘phpunit.phar’
+
+phpunit.phar         66%[============>       ]   1.88M   112KB/s    eta 10s    phpunit.phar         69%[============>       ]   1.98M   116KB/s    eta 10s    phpunit.phar         69%[============>       ]   1.99M   116KB/s    eta 8s     phpunit.phar         73%[=============>      ]   2.08M   121KB/s    eta 8s     phpunit.phar         74%[=============>      ]   2.13M   122KB/s    eta 8s     phpunit.phar         78%[==============>     ]   2.23M   127KB/s    eta 6s     phpunit.phar         79%[==============>     ]   2.26M   129KB/s    eta 6s     phpunit.phar         81%[===============>    ]   2.33M   131KB/s    eta 6s     phpunit.phar         83%[===============>    ]   2.38M   137KB/s    eta 4s     phpunit.phar         86%[================>   ]   2.48M   140KB/s    eta 4s     phpunit.phar         88%[================>   ]   2.52M   146KB/s    eta 4s     phpunit.phar         91%[=================>  ]   2.62M   149KB/s    eta 4s     phpunit.phar         92%[=================>  ]   2.65M   154KB/s    eta 2s     phpunit.phar         96%[==================> ]   2.76M   175KB/s    eta 2s     phpunit.phar         97%[==================> ]   2.79M   182KB/s    eta 2s     phpunit.phar        100%[===================>]   2.85M   188KB/s    in 23s     
+
+2016-07-13 10:22:32 (125 KB/s) - ‘phpunit.phar’ saved [2988429/2988429]
+

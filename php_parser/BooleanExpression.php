@@ -1,4 +1,5 @@
 <?php
+include 'iExpression.php';
 
 /**
  * Created by PhpStorm.
@@ -21,10 +22,18 @@ class BooleanExpression implements iExpression {
     private $secondExpr;
 
     /**
-     * @var string
+     * @var iExpression
      * The operator that the expression will operate on its two sub expressions with.
      */
     private $operator;
+
+    public static function withValues(iExpression $firstExpr, iExpression $operator, iExpression $secondExpr) {
+        $instance = new self();
+        $instance->setFirstExpr($firstExpr);
+        $instance->setOperator($operator);
+        $instance->setSecondExpr($secondExpr);
+        return $instance;
+    }
 
     /**
      * @return iExpression
@@ -59,7 +68,7 @@ class BooleanExpression implements iExpression {
     }
 
     /**
-     * @return string
+     * @return iExpression
      */
     public function getOperator()
     {
@@ -67,7 +76,7 @@ class BooleanExpression implements iExpression {
     }
 
     /**
-     * @param string $operator
+     * @param iExpression $operator
      */
     public function setOperator($operator)
     {
