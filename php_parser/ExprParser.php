@@ -563,6 +563,44 @@ class ExprParser {
         return $result;
     }
 
+    function parseTag(){
+
+        /**
+         * The tag expression to be returned.
+         */
+        $result = new TagExpression();
+
+        /**
+         * Determines whether in the parsing a close bracket has been found or not.
+         */
+        $closeBraceFound = false;
+
+        /**
+         * The name of the tag being parsed - everything upto the close brace.
+         */
+        $tagName = "";
+
+        //if the first character is not an open brace then throw a parse exception
+        if($this->getNextChar() != "{") {
+            throw new ExpressionParseException("Hashtag not followed by open brace character.");
+        }
+
+        //get the tag name - the string upto the last brace - but break if it reaches the end of the line.
+        while(!$closeBraceFound && $this->isNext()) {
+            $tagName = $tagName . $this->getNextChar();
+        }
+
+        //if the loop broke unexpectedly then throw a parse exception.
+        if(!$closeBraceFound) {
+            throw new ExpressionParseException("No close brace found ");
+        }
+
+        //set the tag name in the result structure to the tag name parsed
+        $result->setResult($tagName);
+
+        return $result;
+    }
+
     /**
      * Determines if the previous token in the string is a closed bracket or not to see if a space should be ignored
      * when parsing if statements with bracketed statements.
