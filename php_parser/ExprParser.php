@@ -172,14 +172,25 @@ class ExprParser {
         return $result;
     }
 
+    function parseIf() {
+
+        /**
+         * The overall if statement structure to be returned.
+         */
+        $result = new IfStatement();
+        $result->setBoolExpression($this->parseBool());
+
+        return $result;
+    }
+
     /**
-     * Parses an if statement in the grammar.
+     * Parses a boolean expression in the grammar.
      * @throws ExpressionParseException
      * If the statement is syntactically incorrect, then this exception is thrown.
      * @throws StackEmptyException
      * If the parser tries to pop off the top of the stack when it is empty then this exception is thrown.
      */
-	function parseIf() {
+	function parseBool() {
 
         /**
          * The result to be returned from parsing the expression.
@@ -625,13 +636,27 @@ class ExprParser {
     }
 
     /**
-     * Determines if the previous token in the string is a closed bracket or not to see if a space should be ignored
+     * Determines if the previous token in the string is a closed bracket/brace or not to see if a space should be ignored
      * when parsing if statements with bracketed statements.
      * @return bool
      */
     function previousTokenIsCloseBracket() {
+
+        /**
+         * The list of characters that represent closing statements, which gets the parser to skip
+         * to the next statement.
+         */
+        $closingChars = array(")", "}");
+
+        /**
+         * The previous token in the parser.
+         */
         $previousTokenChar = $this->exprArray[$this->parseIndex - 2];
-        return $previousTokenChar == ")" || $previousTokenChar == "}";
+
+        /**
+         * Returns true if the previous token is any of the closing bracket style characters.
+         */
+        return in_array($previousTokenChar, $closingChars);
     }
 
     /**

@@ -15,11 +15,22 @@ class ExprParserController {
   private $exprParser;
 
   public function parse() {
+
+      /**
+       * @var iExpression[]
+       */
+      $function = [];
+  
+      /**
+       *The line that has been parsed.
+       */
+      $parsedLine = null;
+
     for($i = 0; $i < count($this->linesToParse); $i++) {
         try {
-            $this->exprParser.parse($this->linesToParse);
+            $parsedLine = $this->exprParser.parse($this->linesToParse);
         } catch (ExpressionParseException $e) {
-            
+            throw new Exception("Parsing issue on line " . strval($i + 1) ." : " . $e->getMessage());
         }
     }
   }

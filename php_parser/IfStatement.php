@@ -22,18 +22,18 @@ class IfStatement implements iExpression
     private $thenConstructor;
 
     /**
-     * @var ElseExpression
+     * @var array
      * The instructions that are carried out if the boolean expression is determined false
      * Or an else if structure is defined.
      */
-    private $elseConstructor;
+    private $elseConstructors;
 
     /**
      * @return mixed
      */
-    public function getElseConstructor()
+    public function getElseConstructors()
     {
-        return $this->elseConstructor;
+        return $this->elseConstructors;
     }
 
     /**
@@ -41,7 +41,16 @@ class IfStatement implements iExpression
      */
     public function setElseConstructor($elseConstructor)
     {
-        $this->elseConstructor = $elseConstructor;
+        $this->elseConstructors = $elseConstructor;
+    }
+
+    /**
+     * Adds another else constructor to this objects array of else constructors.
+     * @param $elseConstructor
+     * The else constructor to add to the array.
+     */
+    public function addToElseConstructors($elseConstructor) {
+        array_push($this->elseConstructors, $elseConstructor);
     }
 
     /**
@@ -59,7 +68,6 @@ class IfStatement implements iExpression
     {
         $this->thenConstructor = $thenConstructor;
     }
-
 
     /**
      * @return mixed
@@ -84,7 +92,15 @@ class IfStatement implements iExpression
 
     public function __toString()
     {
-        // TODO: Implement __toString() method.
+        //the string formed of all of the else statements in the expression.
+        $elseString = "";
+
+        //append all of the else statements as strings to the else string to be printed for this if statement
+        foreach($this->elseConstructors as $elseStat) {
+            $elseString = $elseString . $elseStat->__toString();
+        }
+
+        return $this->boolExpression->__toString() . $this->thenConstructor->__toString() . $elseString;
     }
 
 
