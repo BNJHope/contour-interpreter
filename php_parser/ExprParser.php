@@ -198,13 +198,36 @@ class ExprParser {
             //get the next char in the stream
             $currentChar = $this->getNextChar();
 
-
-
             //decide what to do next depending on what that character is
             switch($currentChar) {
 
                 //parses tags
                 case "#" :
+
+                    //make the expression to add the parsed reference tag
+                    //if there are problems parsing, then throw that exception.
+                    try {
+                        $exprToAdd = $this->parseTag();
+                    } catch (ExpressionParseException $e) {
+                        throw new ExpressionParseException($e);
+                    }
+
+                    //if the first expression is null then that means that the tag should take the place
+                    //of the first expression
+                    if($result->getFirstExpr() == null) {
+                        $result->setFirstExpr($exprToAdd);
+
+                    //if the operator is null but the first expression is full then that means that the tag is
+                    //in the place of the operator of the expression, which is illegal.
+                    }else if($result->getOperator() == null) {
+                        throw new ExpressionParseException("Expression contains tag at operator space.");
+
+                    //if the second expression is null and everything else is full then that means that the reference tag
+                    //if for the second expression
+                    } else if ($result->getSecondExpr() == null) {
+                        $result->setSecondExpr($exprToAdd);
+                        $expressionComplete = true;
+                    }
 
                 //parse the sub expression recursively if its an open bracket
                 case "(" :
@@ -608,7 +631,7 @@ class ExprParser {
      */
     function previousTokenIsCloseBracket() {
         $previousTokenChar = $this->exprArray[$this->parseIndex - 2];
-        return $previousTokenChar == ")";
+        return $previousTokenChar == ")" || $previousTokenChar == "}";
     }
 
     /**
