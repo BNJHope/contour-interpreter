@@ -172,17 +172,6 @@ class ExprParser {
         return $result;
     }
 
-    function parseIf() {
-
-        /**
-         * The overall if statement structure to be returned.
-         */
-        $result = new IfStatement();
-        $result->setBoolExpression($this->parseBool());
-
-        return $result;
-    }
-
     /**
      * Parses a boolean expression in the grammar.
      * @throws ExpressionParseException
@@ -190,7 +179,7 @@ class ExprParser {
      * @throws StackEmptyException
      * If the parser tries to pop off the top of the stack when it is empty then this exception is thrown.
      */
-	function parseBool() {
+	function parseIf() {
 
         /**
          * The result to be returned from parsing the expression.
