@@ -17,7 +17,7 @@ include 'ExprParserController.php';
  * Date: 15/07/2016
  * Time: 16:11
  */
-class ExprControllerTests
+class ExprControllerTests extends TestCase
 {
 
     /**
