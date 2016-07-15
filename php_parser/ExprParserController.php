@@ -46,19 +46,7 @@ class ExprParserController
         //set up the parser by creating the array
         $this->initialiseParser($stringToParse);
 
-        /**
-         * @var iExpression[]
-         * The function that the user is wanting to carry out, expressed in a list of expressions.
-         */
-        $function = [];
-
-        /**
-         * @var iExpression;
-         *The line that has been parsed.
-         */
-        $parsedLine = null;
-
-        $function = $this->parseTotal();
+        $this->parseTotal();
     }
 
     /**
@@ -86,30 +74,46 @@ class ExprParserController
 
         //while there are still lines to be parsed.
         while($this->isNext()) {
-            try {
-                $parsedLine = $this->getNextElement();
-            } catch (ExpressionParseException $e) {
-                throw new ExpressionParseException($e);
+
+            //if there is at least one instruction that has been parsed and it is not an instance of an else expression
+            //then there is a possibility that a previous if statement checked to see if it was an else expression, found it
+            // was not and then terminated.
+            //Therefore, check to see if there are any non else expressions left over and fetch it from the list of instructions.
+            if($this->instructPtr > 0 && !($this->getCurrentElement() instanceof ElseExpression))
+                $parsedLine = $this->getCurrentElement();
+            else {
+
+                //otherwise parse the next line in the function
+                try {
+                    $parsedLine = $this->getNextElement();
+                } catch (ExpressionParseException $e) {
+                    throw new ExpressionParseException($e);
+                }
             }
 
-            //select what to do based on
-            switch (true) {
+            //select what to do based on the type of the expression returned from the parser
+            //if it is a boolean expression, then construct an if statement based off of it
+            if($parsedLine instanceOf BooleanExpression)
+                $exprToAdd = $this->compileIf($parsedLine);
 
-                case $parsedLine instanceOf BooleanExpression:
-                    $exprToAdd = $this->compileIf($parsedLine);
-                    break;
-                case $parsedLine instanceOf ThenExpression:
+            //if not, then just add it like normal to the array of function statements
+            else
+                $exprToAdd = $parsedLine;
 
-                    break;
-            }
+            //push the expression that was parsed into the array of expressions to be evaluated after
+            //all of the parsing is complete
+            array_push($this->function, $exprToAdd);
         }
 
-        return $result;
     }
 
     /**
-     * Pulls together an if statement if a boolean expression is found
-     * @param $parsedLine
+     * Compiles a full if-then-else statement based on a boolean expression passed to the function and all
+     * subsequent lines involved with it.
+     * @param $parsedLine BooleanExpression
+     * The boolean expression that the if statement is based upon.
+     * @return IfStatement
+     * The total if statement containing then and else clauses which can be evaluated by the evaluator.
      */
     private function compileIf($parsedLine) {
         /**
@@ -118,7 +122,7 @@ class ExprParserController
         $totalIfStatement = new IfStatement();
 
         /**
-         * @var ThenExpression
+         * @var ThenExpression | ElseExpression | iExpression
          * The next line to be fetched
          */
         $nextLine = null;
@@ -143,12 +147,41 @@ class ExprParserController
          */
         $thenSubExpr = $nextLine->getSubExpression();
 
-        switch(true) {
-
-            case $thenSubExpr instanceOf BooleanExpression :
-                $nextLine->setSubExpression($this->compileIf($thenSubExpr));
+        //if the then subexpression is an instance of a boolean expression then convert the boolean expression
+        //and any of the subsequent lines involved into a full if statement and replace the boolean expression on the
+        //then statement with the full if statement attached to the then statement.
+        if($thenSubExpr instanceof  BooleanExpression) {
+            $nextLine->setSubExpression($this->compileIf($thenSubExpr));
         }
 
+        //set the then clause of the if statement to be returned as the then statement which has been parsed
+        $totalIfStatement->setThenConstructor($nextLine);
+
+        try {
+            //get the next line of the function
+            $nextLine = $this->getNextElement();
+        } catch (ExpressionParseException $e) {
+            throw new ExpressionParseException($e);
+        }
+
+        //while the next line is an else expression, parse it and attach it to the array of else expressions associated
+        //with the if statement that is going to be returned at the end of this function
+        while($nextLine instanceof ElseExpression) {
+
+            //if the subexpression of this else statement is a boolean expression then parse it and the subsequent lines
+            //as an if statement and attach it as the subexpression of the else clause
+            if($nextLine->getSubExpression() instanceof  BooleanExpression) {
+                $nextLine->setSubExpression($this->compileIf($nextLine->getSubExpression()));
+            }
+
+            //add the parsed else structure to the total if structure
+            $totalIfStatement->addToElseConstructors($nextLine);
+
+            //set the next line as the next line to be parsed
+            $nextLine = $this->getNextElement();
+        }
+
+        return $totalIfStatement;
     }
 
     /**

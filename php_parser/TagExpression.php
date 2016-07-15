@@ -37,7 +37,12 @@ class TagExpression implements iExpression
 
     public function __toString()
     {
-        return "#{" . $this->tag . "}";
+        return "#(" . $this->tag . ")";
     }
 
+    public static function withValues($tag){
+        $instance = new self();
+        $instance->setTag($tag);
+        return $instance;
+    }
 }

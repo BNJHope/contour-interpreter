@@ -604,13 +604,18 @@ class ExprParser {
         $tagName = "";
 
         //if the first character is not an open brace then throw a parse exception
-        if($this->getNextChar() != "{") {
-            throw new ExpressionParseException("Hashtag not followed by open brace character.");
+        if($this->getNextChar() != "(") {
+            throw new ExpressionParseException("Hashtag not followed by open bracket character.");
         }
 
         //get the tag name - the string upto the last brace - but break if it reaches the end of the line.
         while(!$closeBraceFound && $this->isNext()) {
-            $tagName = $tagName . $this->getNextChar();
+            $currentChar = $this->getNextChar();
+            if($currentChar == ")") {
+                $closeBraceFound = true;
+            } else {
+                $tagName = $tagName . $currentChar;
+            }
         }
 
         //if the loop broke unexpectedly then throw a parse exception.

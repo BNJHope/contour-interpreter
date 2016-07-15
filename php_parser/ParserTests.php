@@ -162,9 +162,9 @@ class ParserTests extends TestCase
         $this->assertEquals($objToTest, self::$parser->parse(self::$thenValidStatement));
     }
 
-    public function testIfValidThenIfStatement() {
 
-
+    public function testTagExpression(){
+        $objToTest =
     }
 
 }
