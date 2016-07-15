@@ -29,6 +29,11 @@ class ExprParserController
      */
     private $instructPtr;
 
+    /**
+     * The objects which have been parsed by the parser.
+     */
+    private $function;
+
     public function __construct()
     {
         $this->linesToParse = array();
@@ -87,17 +92,43 @@ class ExprParserController
                 throw new ExpressionParseException($e);
             }
 
+            //select what to do based on
             switch (true) {
 
                 case $parsedLine instanceOf BooleanExpression:
-
+                    $exprToAdd = $this->compileIf($parsedLine);
                     break;
                 case $parsedLine instanceOf ThenExpression:
 
+                    break;
             }
         }
 
         return $result;
+    }
+
+    private function compileIf($parsedLine) {
+        /**
+         * The if statement to return.
+         */
+        $totalIfStatement = new IfStatement();
+
+        //set the boolean expression part of the if statement to the parsed line given as the parameter
+        $totalIfStatement->setBoolExpression($parsedLine);
+
+        /**
+         * @var iExpression
+         * The next line to be fetched
+         */
+        $nextLine = null;
+
+        //try to get the next line - it is syntactically incorrect if it is not a then statement
+        try{
+            $nextLine = $this->getNextElement();
+        } catch (ExpressionParseException $e) {
+            throw new ExpressionParseException("Parse Error line ". $this->instructPtr . " : " . $e->getMessage());
+        }
+
     }
 
     /**
@@ -113,9 +144,18 @@ class ExprParserController
             throw new Exception("Parsing issue on line " . strval($this->instructPtr + 1) . " : " . $e->getMessage());
         }
 
+        //increment the instruction pointer
         $this->instructPtr++;
 
         return $parsedLine;
+    }
+
+    /**
+     * Gets the previous expression object in the function statement.
+     */
+    private function getPreviousElement()
+    {
+        return $this->function[$this->instructPtr - 2];
     }
 
     /**
@@ -134,9 +174,31 @@ class ExprParserController
      */
     private function initialiseParser($stringToParse)
     {
+        //set the object's string to parse as the string given to it.
         $this->stringToParse = $stringToParse;
+
+        //set the array of lines to parse as the string to parse
+        //split at every occurrence of the new line character
         $this->linesToParse = explode("\n", $stringToParse);
+
+        //set the instruction pointer back to the beginning
         $this->instructPtr = 0;
+
+        //set the array of lines that have been parsed into a blank array
+        $this->function = array();
     }
 
+    /**
+     * @param $err ExpressionParseException
+     * The error thrown by the parser.
+     * @param string $extraErrorMsg
+     * If the error was found in the
+     * @throws ExpressionParseException
+     */
+    private function throwParseError($err = null, $extraErrorMsg = "") {
+
+        $e = new ExpressionParseException("Parse Error line ". $this->instructPtr . " : " . ($extraErrorMsg == "" ? $err->getMessage() : $extraErrorMsg));
+
+        throw $e;
+    }
 }
