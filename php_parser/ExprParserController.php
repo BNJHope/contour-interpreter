@@ -107,26 +107,46 @@ class ExprParserController
         return $result;
     }
 
+    /**
+     * Pulls together an if statement if a boolean expression is found
+     * @param $parsedLine
+     */
     private function compileIf($parsedLine) {
         /**
          * The if statement to return.
          */
         $totalIfStatement = new IfStatement();
 
-        //set the boolean expression part of the if statement to the parsed line given as the parameter
-        $totalIfStatement->setBoolExpression($parsedLine);
-
         /**
-         * @var iExpression
+         * @var ThenExpression
          * The next line to be fetched
          */
         $nextLine = null;
+
+        //set the boolean expression part of the if statement to the parsed line given as the parameter
+        $totalIfStatement->setBoolExpression($parsedLine);
 
         //try to get the next line - it is syntactically incorrect if it is not a then statement
         try{
             $nextLine = $this->getNextElement();
         } catch (ExpressionParseException $e) {
-            throw new ExpressionParseException("Parse Error line ". $this->instructPtr . " : " . $e->getMessage());
+            $this->throwParseError($e);
+        }
+
+        //if the line that followed the if statement was not a then statement then throw this error.
+        if(!($nextLine instanceof ThenExpression))
+            $this->throwParseError(null,"If statement not followed by a then statement.");
+
+        /**
+         * The subexpression of the then statement.
+         * @var iExpression
+         */
+        $thenSubExpr = $nextLine->getSubExpression();
+
+        switch(true) {
+
+            case $thenSubExpr instanceOf BooleanExpression :
+                $nextLine->setSubExpression($this->compileIf($thenSubExpr));
         }
 
     }
@@ -136,12 +156,16 @@ class ExprParserController
      */
     private function getNextElement()
     {
+        /**
+         * @var iExpression
+         */
+        $parsedLine = null;
         try {
             //get the next line in the function as an expression object
             //which can be evaluated
             $parsedLine = $this->exprParser->parse($this->linesToParse[$this->instructPtr]);
         } catch (ExpressionParseException $e) {
-            throw new Exception("Parsing issue on line " . strval($this->instructPtr + 1) . " : " . $e->getMessage());
+            $this->throwParseError($e);
         }
 
         //increment the instruction pointer
@@ -153,9 +177,9 @@ class ExprParserController
     /**
      * Gets the previous expression object in the function statement.
      */
-    private function getPreviousElement()
+    private function getCurrentElement()
     {
-        return $this->function[$this->instructPtr - 2];
+        return $this->function[$this->instructPtr - 1];
     }
 
     /**
@@ -189,6 +213,7 @@ class ExprParserController
     }
 
     /**
+     * Error controller
      * @param $err ExpressionParseException
      * The error thrown by the parser.
      * @param string $extraErrorMsg
