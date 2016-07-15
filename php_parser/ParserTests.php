@@ -8,6 +8,8 @@ include 'OperationExpression.php';
 include 'VariableDeclarationExpression.php';
 include 'ResultObject.php';
 include 'ThenExpression.php';
+include 'TagExpression.php';
+include 'ExprParserController.php';
 
 /**
  * Created by PhpStorm.
@@ -162,9 +164,13 @@ class ParserTests extends TestCase
         $this->assertEquals($objToTest, self::$parser->parse(self::$thenValidStatement));
     }
 
-
     public function testTagExpression(){
-        $objToTest =
+        $objToTest = TagExpression::withValues("test");
+
+        $objToTest = VariableDeclarationExpression::withValues(new RawValueExpression("a"), $objToTest);
+
+        $this->assertEquals($objToTest, self::$parser->parse("let a = #(test)"));
     }
+
 
 }

@@ -114,6 +114,8 @@ class ExprParserController
      * The boolean expression that the if statement is based upon.
      * @return IfStatement
      * The total if statement containing then and else clauses which can be evaluated by the evaluator.
+     * @throws ExpressionParseException
+     * If there are any syntactic parse errors then
      */
     private function compileIf($parsedLine) {
         /**

@@ -8,7 +8,6 @@
  */
 class IfStatement implements iExpression
 {
-
     /**
      * @var BooleanExpression
      * The boolean expression that determines whether the if condition is true or false.
@@ -27,6 +26,19 @@ class IfStatement implements iExpression
      * Or an else if structure is defined.
      */
     private $elseConstructors;
+
+    /**
+     * Returns an if statement instance with the given boolean expression and then expression
+     * @param $bool
+     * @param $then
+     * @return IfStatement
+     */
+    public static function withIfAndThen($bool,  $then) {
+        $instance = new self();
+        $instance->setBoolExpression($bool);
+        $instance->setThenConstructor($then);
+        return $instance;
+    }
 
     /**
      * @return mixed
