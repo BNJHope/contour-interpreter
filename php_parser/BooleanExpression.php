@@ -89,7 +89,52 @@ class BooleanExpression implements iExpression {
     }
 
 
+    /**
+     * Evaluates the boolean expression
+     * @return bool
+     * The result from evaluating the boolean expression.
+     * @throws ExpressionEvaluationException
+     * If there is an evaluation error then throw this over to the calling method.
+     */
     public function evaluate(){
 
+        //try and get the first side of the expression
+        try {
+            $leftHandSide = $this->firstExpr->evaluate();
+        } catch (ExpressionEvaluationException $e) {
+            throw new ExpressionEvaluationException($e);
+        }
+
+        //if there is only a left hand side expression
+        if($this->operator = null) {
+
+            //return the value as a boolean expression whatever the type of the left hand side is.
+            return ($leftHandSide || false);
+
+        } else {
+
+            //get the second expression if it exists
+            try {
+                $rightHandSide = $this->secondExpr->evaluate();
+            } catch (ExpressionEvaluationException $e) {
+                throw new ExpressionEvaluationException($e);
+            }
+
+            //return true or false depending on the two values
+            switch ($this->operator->evaluate()) {
+                case "&" :
+                    return $leftHandSide && $rightHandSide;
+                case "|" :
+                    return $leftHandSide || $rightHandSide;
+                case "=" :
+                    return $leftHandSide == $rightHandSide;
+                case ">" :
+                    return $leftHandSide > $rightHandSide;
+                case "<" :
+                    return $leftHandSide < $rightHandSide;
+                default :
+                    throw new ExpressionEvaluationException("Invalid operator " . $this->operator . " between " . $this->firstExpr . " and " . $this->secondExpr);
+            }
+        }
     }
 }
