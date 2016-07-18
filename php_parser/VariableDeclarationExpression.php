@@ -59,7 +59,7 @@ class VariableDeclarationExpression implements iExpression {
 
 
     public function evaluate(){
-            //TODO : implement
+        VariableMap::setVariable($this->identifier, $this->value);
     }
 
     public function __toString()

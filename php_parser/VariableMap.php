@@ -34,7 +34,7 @@ class VariableMap
      * If there is not a value stored at the given key then this exception is thrown.
      */
     public static function getVariable($key) {
-        if(array_key_exists($key, self::variables))
+        if(array_key_exists($key, self::$variables))
             return self::$variables[$key];
         else
             throw new ExpressionEvaluationException("Variable " . $key . " not found.");

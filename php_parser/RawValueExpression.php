@@ -66,7 +66,7 @@ class RawValueExpression implements iExpression
             //otherwise check to see if it is a variable name
             default :
                 try {
-
+                    VariableMap::getVariable($this->value);
                 } catch (ExpressionEvaluationException $e) {
                     throw new ExpressionEvaluationException($e);
                 }
