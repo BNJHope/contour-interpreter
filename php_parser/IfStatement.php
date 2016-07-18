@@ -21,7 +21,7 @@ class IfStatement implements iExpression
     private $thenConstructor;
 
     /**
-     * @var array
+     * @var ElseExpression[]
      * The instructions that are carried out if the boolean expression is determined false
      * Or an else if structure is defined.
      */
@@ -99,7 +99,37 @@ class IfStatement implements iExpression
 
     public function evaluate()
     {
-        // TODO: Implement evaluate() method.
+        /**
+         * The result of the boolean expression in the If statement
+         * @var boolean
+         * */
+        $mainBool = null;
+
+        /**
+         * The index of where in the array of else constructors the else evaluator loop is.
+         */
+        $elseInstrCounter = 0;
+
+        /**
+         * The result of one else instruction/
+         */
+        $elseRes = null;
+
+        try{
+            $mainBool = $this->boolExpression->evaluate();
+        } catch (ExpressionEvaluationException $e) {
+            throw new ExpressionEvaluationException($e);
+        }
+
+        if($mainBool)
+            return $this->thenConstructor->evaluate();
+        else {
+            while($elseInstrCounter != ($this->elseConstructors) || $elseRes != null) {
+                $elseRes = $this->elseConstructors[$elseInstrCounter]->evaluate();
+            }
+        }
+
+        return $elseRes;
     }
 
     public function __toString()
