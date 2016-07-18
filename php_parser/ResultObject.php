@@ -10,7 +10,7 @@ class ResultObject implements iExpression
 {
 
     /**
-     * @var string
+     * @var iExpression
      * The result to be returned by the evaluator.
      */
     private $result;
@@ -23,7 +23,7 @@ class ResultObject implements iExpression
 
     public function evaluate()
     {
-        // TODO: Implement evaluate() method.
+        return $this->result->evaluate();
     }
 
     public function __toString()

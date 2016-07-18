@@ -2,12 +2,20 @@
 
 class ExprEvaluator {
 
-  private $variables;
-
     /**
-     * @var array
-     * Signs that represent boolean operations between expressions.
+     * Evaluates a group of expressions as one function.
+     * @param iExpression[] $function
+     * The function that has been parsed as a group of iExpressions.
+     * @returns mixed
      */
-    private $boolOps = array('=', '>', '<', '&', '|', '!');
+    public function evaluate($function) {
+
+        $endOfFunction = false;
+
+        while(!$endOfFunction) {
+
+        }
+
+    }
 
 }

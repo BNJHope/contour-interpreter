@@ -501,7 +501,7 @@ class ExprParser
         }
 
         //make the result value the string from the stack.
-        $result->setResult($resString);
+        $result->setResult(new RawValueExpression($resString));
 
         return $result;
     }
