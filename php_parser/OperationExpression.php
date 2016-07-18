@@ -9,6 +9,9 @@
 class OperationExpression implements iExpression
 {
 
+    /**
+     * @var string
+     */
     private $operation;
 
     /**
@@ -38,7 +41,7 @@ class OperationExpression implements iExpression
 
     public function evaluate()
     {
-        // TODO: Implement evaluate() method.
+        return $this->operation;
     }
 
     public function __toString()

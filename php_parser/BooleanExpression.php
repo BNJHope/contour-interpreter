@@ -132,6 +132,10 @@ class BooleanExpression implements iExpression {
                     return $leftHandSide > $rightHandSide;
                 case "<" :
                     return $leftHandSide < $rightHandSide;
+                case "and" :
+                    return $leftHandSide && $rightHandSide;
+                case "or" :
+                    return $leftHandSide || $rightHandSide;
                 default :
                     throw new ExpressionEvaluationException("Invalid operator " . $this->operator . " between " . $this->firstExpr . " and " . $this->secondExpr);
             }

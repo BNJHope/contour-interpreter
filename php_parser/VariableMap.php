@@ -13,7 +13,7 @@ class VariableMap
      * The array that maps the identifiers of variables to their values.
      * @var array
      */
-    private $variables;
+    private static $variables;
 
     /**
      * Initialises the variables array.
@@ -21,7 +21,7 @@ class VariableMap
      */
     public function __construct()
     {
-        $this->variables = array();
+        self::$variables = array();
     }
 
     /**
@@ -33,9 +33,9 @@ class VariableMap
      * @throws ExpressionEvaluationException
      * If there is not a value stored at the given key then this exception is thrown.
      */
-    public function getVariable($key) {
-        if(array_key_exists($key, $this->variables))
-            return $this->variables[$key];
+    public static function getVariable($key) {
+        if(array_key_exists($key, self::variables))
+            return self::$variables[$key];
         else
             throw new ExpressionEvaluationException("Variable " . $key . " not found.");
     }
@@ -47,8 +47,8 @@ class VariableMap
      * @param $value
      * The value of the variable to be stored.
      */
-    public function setVariable($key, $value) {
-        $this->variables[$key] = $value;
+    public static function setVariable($key, $value) {
+        self::$variables[$key] = $value;
     }
 
 }
