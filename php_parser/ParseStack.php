@@ -1,5 +1,7 @@
 <?php
 
+namespace bnjhope\php_parser;
+
 /**
  * Class ParseStack
  * Basic stack class for the parser to store characters used.

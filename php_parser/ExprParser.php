@@ -1,6 +1,6 @@
 <?php
-require 'ExpressionParseException.php';
-require 'ParseStack.php';
+
+namespace bnjhope\php_parser;
 
 class ExprParser
 {

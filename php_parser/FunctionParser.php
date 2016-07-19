@@ -1,5 +1,9 @@
 <?php
 
+namespace bnjhope\php_parser;
+
+require "../vendor/autoload.php";
+
 /**
  * Overall class for managing parsing and evaluating functions passed to it.
  * Created by PhpStorm.
@@ -41,7 +45,6 @@ class FunctionParser
         }
 
         return $result;
-
     }
 
 }

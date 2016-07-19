@@ -1,5 +1,7 @@
 <?php
 
+namespace bnjhope\php_parser;
+
 include 'ExprParser.php';
 
 class ExprParserController

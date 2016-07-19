@@ -1,0 +1,15 @@
+{
+    "name": "owner/evergreen-function-parser",
+    "authors": [
+        {
+            "name": "bnjhope",
+            "email": "ben3@lougeek.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "bnjhope\\php_parser\\": "php_parser/"
+        }
+    }
+}

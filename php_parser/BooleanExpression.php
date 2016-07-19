@@ -1,5 +1,6 @@
 <?php
-include 'iExpression.php';
+
+namespace bnjhope\php_parser;
 
 /**
  * Created by PhpStorm.

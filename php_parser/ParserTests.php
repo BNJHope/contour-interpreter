@@ -1,15 +1,10 @@
 <?php
 
+namespace bnjhope\php_parser;
+
 use PHPUnit\Framework\TestCase;
-include 'ExprParser.php';
-include 'BooleanExpression.php';
-include 'RawValueExpression.php';
-include 'OperationExpression.php';
-include 'VariableDeclarationExpression.php';
-include 'ResultObject.php';
-include 'ThenExpression.php';
-include 'TagExpression.php';
-include 'ExprParserController.php';
+
+require '../vendor/autoload.php';
 
 /**
  * Created by PhpStorm.

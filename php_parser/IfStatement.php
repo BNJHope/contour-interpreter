@@ -1,5 +1,7 @@
 <?php
 
+namespace bnjhope\php_parser;
+
 /**
  * Created by PhpStorm.
  * User: Owner
