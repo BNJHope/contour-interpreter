@@ -49,6 +49,8 @@ class ExprParserController
         $this->initialiseParser($stringToParse);
 
         $this->parseTotal();
+
+        return $this->function;
     }
 
     /**
@@ -104,6 +106,8 @@ class ExprParserController
 
             //push the expression that was parsed into the array of expressions to be evaluated after
             //all of the parsing is complete
+
+
             array_push($this->function, $exprToAdd);
         }
 
@@ -161,28 +165,47 @@ class ExprParserController
         //set the then clause of the if statement to be returned as the then statement which has been parsed
         $totalIfStatement->setThenConstructor($nextLine);
 
-        try {
-            //get the next line of the function
-            $nextLine = $this->getNextElement();
-        } catch (ExpressionParseException $e) {
-            throw new ExpressionParseException($e);
-        }
+        if($this->isNext()){
 
-        //while the next line is an else expression, parse it and attach it to the array of else expressions associated
-        //with the if statement that is going to be returned at the end of this function
-        while($nextLine instanceof ElseExpression) {
+            $exitCondition = false;
 
-            //if the subexpression of this else statement is a boolean expression then parse it and the subsequent lines
-            //as an if statement and attach it as the subexpression of the else clause
-            if($nextLine->getSubExpression() instanceof  BooleanExpression) {
-                $nextLine->setSubExpression($this->compileIf($nextLine->getSubExpression()));
+            try {
+                //get the next line of the function
+                $nextLine = $this->getNextElement();
+            } catch (ExpressionParseException $e) {
+                throw new ExpressionParseException($e);
             }
 
-            //add the parsed else structure to the total if structure
-            $totalIfStatement->addToElseConstructors($nextLine);
+            if(!($nextLine instanceof ElseExpression)) {
+                    $exitCondition = true;
+            }
 
-            //set the next line as the next line to be parsed
-            $nextLine = $this->getNextElement();
+
+            //while the next line is an else expression, parse it and attach it to the array of else expressions associated
+            //with the if statement that is going to be returned at the end of this function
+            while(!$exitCondition) {
+
+                //if the subexpression of this else statement is a boolean expression then parse it and the subsequent lines
+                //as an if statement and attach it as the subexpression of the else clause
+                if($nextLine->getSubExpression() instanceof  BooleanExpression) {
+                    $nextLine->setSubExpression($this->compileIf($nextLine->getSubExpression()));
+                }
+
+                //add the parsed else structure to the total if structure
+                $totalIfStatement->addToElseConstructors($nextLine);
+
+                if($this->isNext()) {
+                    //set the next line as the next line to be parsed
+                    $nextLine = $this->getNextElement();
+
+                    $string = "";
+
+                    $exitCondition = $nextLine instanceof ElseExpression ? false : true;
+                } else {
+                    $exitCondition = true;
+                }
+
+            }
         }
 
         return $totalIfStatement;
@@ -225,7 +248,7 @@ class ExprParserController
     private function isNext()
     {
         //returns true if the instruction pointer has not yet reached the last element of the array of function instructions.
-        return ($this->instructPtr == count($this->linesToParse));
+        return (!($this->instructPtr == count($this->linesToParse)));
     }
 
     /**
@@ -240,7 +263,7 @@ class ExprParserController
 
         //set the array of lines to parse as the string to parse
         //split at every occurrence of the new line character
-        $this->linesToParse = explode("\n", $stringToParse);
+        $this->linesToParse = explode("\r\n", $stringToParse);
 
         //set the instruction pointer back to the beginning
         $this->instructPtr = 0;

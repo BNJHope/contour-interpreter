@@ -41,7 +41,7 @@ class ThenExpression implements iExpression
 
     public function evaluate()
     {
-        // TODO: Implement evaluate() method.
+        return $this->subExpression->evaluate();
     }
 
     public function __toString()

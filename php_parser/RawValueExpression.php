@@ -46,8 +46,11 @@ class RawValueExpression implements iExpression
      */
     public function evaluate()
     {
+        $test1 = substr($this->value, -1);
+        $test2 = substr($this->value, 0, 1);
+        $string = "";
         switch(true) {
-            case (substr($this->value, -1) == "\"") && (substr($this->value, 0) == "\"") :
+            case (substr($this->value, -1) == "\"") && (substr($this->value, 0, 1) == "\"") :
                 return $this->value;
             //if it scans correctly as an integer
             case (sscanf($this->value, "%d")) :

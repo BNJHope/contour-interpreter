@@ -25,7 +25,8 @@ class ResultObject implements iExpression
 
     public function evaluate()
     {
-        return $this->result->evaluate();
+
+        return $this->result->evaluate();;
     }
 
     public function __toString()

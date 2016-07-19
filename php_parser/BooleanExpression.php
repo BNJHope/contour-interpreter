@@ -107,7 +107,7 @@ class BooleanExpression implements iExpression {
         }
 
         //if there is only a left hand side expression
-        if($this->operator = null) {
+        if($this->operator == null) {
 
             //return the value as a boolean expression whatever the type of the left hand side is.
             return ($leftHandSide || false);

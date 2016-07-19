@@ -10,6 +10,11 @@ namespace bnjhope\php_parser;
  */
 class IfStatement implements iExpression
 {
+
+    public function __construct() {
+        $this->elseConstructors = array();
+    }
+
     /**
      * @var BooleanExpression
      * The boolean expression that determines whether the if condition is true or false.
@@ -126,10 +131,15 @@ class IfStatement implements iExpression
         if($mainBool)
             return $this->thenConstructor->evaluate();
         else {
-            while($elseInstrCounter != ($this->elseConstructors) || $elseRes != null) {
+
+            while($elseInstrCounter < count($this->elseConstructors) && $elseRes == null) {
+                $string = "";
                 $elseRes = $this->elseConstructors[$elseInstrCounter]->evaluate();
+                $elseInstrCounter++;
             }
         }
+
+        $string = "";
 
         return $elseRes;
     }

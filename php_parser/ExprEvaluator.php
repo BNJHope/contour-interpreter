@@ -32,7 +32,10 @@ class ExprEvaluator {
         $result = null;
 
         while(!$endOfFunction && $result == null ) {
+
             $result = $function[$this->instrPtr++]->evaluate();
+            if($this->instrPtr >= count($function))
+                $endOfFunction = true;
         }
 
         return $result;
