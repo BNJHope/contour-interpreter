@@ -1,6 +1,7 @@
 <?php
 
 namespace bnjhope\php_parser;
+use bnjhope\php_parser\exceptions\ExpressionEvaluationException;
 
 /**
  * Created by PhpStorm.

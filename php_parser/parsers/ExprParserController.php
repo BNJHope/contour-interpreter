@@ -1,6 +1,14 @@
 <?php
 
-namespace bnjhope\php_parser;
+namespace bnjhope\php_parser\parsers;
+
+use bnjhope\php_parser\expressions\BooleanExpression;
+use bnjhope\php_parser\exceptions\ExpressionParseException;
+use bnjhope\php_parser\expressions\ElseExpression;
+use bnjhope\php_parser\expressions\iExpression;
+use bnjhope\php_parser\expressions\IfStatement;
+use bnjhope\php_parser\expressions\ThenExpression;
+use bnjhope\php_parser\parsers\ExprParser;
 
 include 'ExprParser.php';
 

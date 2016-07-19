@@ -1,10 +1,11 @@
 <?php
 
-namespace bnjhope\php_parser;
+namespace bnjhope\php_parser\tests;
 
+use bnjhope\php_parser\FunctionParser;
 use PHPUnit\Framework\TestCase;
 
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 
 /**
  * Created by PhpStorm.

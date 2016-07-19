@@ -6,7 +6,7 @@
  * Time: 10:46
  */
 
-namespace bnjhope\php_parser;
+namespace bnjhope\php_parser\tests;
 
 use PHPUnit\Framework\TestCase;
 

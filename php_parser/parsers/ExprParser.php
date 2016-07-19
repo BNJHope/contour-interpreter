@@ -1,6 +1,19 @@
 <?php
 
-namespace bnjhope\php_parser;
+namespace bnjhope\php_parser\parsers;
+
+use bnjhope\php_parser\expressions\BooleanExpression;
+use bnjhope\php_parser\exceptions\ExpressionParseException;
+use bnjhope\php_parser\expressions\ElseExpression;
+use bnjhope\php_parser\expressions\iExpression;
+use bnjhope\php_parser\expressions\OperationExpression;
+use bnjhope\php_parser\expressions\RawValueExpression;
+use bnjhope\php_parser\expressions\ResultObject;
+use bnjhope\php_parser\expressions\TagExpression;
+use bnjhope\php_parser\expressions\ThenExpression;
+use bnjhope\php_parser\expressions\VariableDeclarationExpression;
+use bnjhope\php_parser\parsers\ParseStack;
+use bnjhope\php_parser\StackEmptyException;
 
 class ExprParser
 {

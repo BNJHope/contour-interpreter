@@ -1,6 +1,11 @@
 <?php
 
-namespace bnjhope\php_parser;
+namespace bnjhope\php_parser\expressions;
+use bnjhope\php_parser\expressions\BooleanExpression;
+use bnjhope\php_parser\exceptions\ExpressionEvaluationException;
+use bnjhope\php_parser\expressions\ElseExpression;
+use bnjhope\php_parser\expressions\iExpression;
+use bnjhope\php_parser\expressions\ThenExpression;
 
 /**
  * Created by PhpStorm.

@@ -1,6 +1,6 @@
 <?php
 
-namespace bnjhope\php_parser;
+namespace bnjhope\php_parser\tests;
 
 use PHPUnit\Framework\TestCase;
 

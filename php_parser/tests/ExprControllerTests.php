@@ -2,6 +2,14 @@
 
 namespace bnjhope\php_parser;
 
+use bnjhope\php_parser\expressions\BooleanExpression;
+use bnjhope\php_parser\expressions\IfStatement;
+use bnjhope\php_parser\expressions\RawValueExpression;
+use bnjhope\php_parser\expressions\ResultObject;
+use bnjhope\php_parser\expressions\TagExpression;
+use bnjhope\php_parser\expressions\ThenExpression;
+use bnjhope\php_parser\expressions\VariableDeclarationExpression;
+use bnjhope\php_parser\parsers\ExprParserController;
 use PHPUnit\Framework\TestCase;
 
 require '../vendor/autoload.php';

@@ -1,6 +1,9 @@
 <?php
 
-namespace bnjhope\php_parser;
+namespace bnjhope\php_parser\expressions;
+use bnjhope\php_parser\exceptions\ExpressionEvaluationException;
+use bnjhope\php_parser\expressions\iExpression;
+use bnjhope\php_parser\VariableMap;
 
 /**
  * Created by PhpStorm.

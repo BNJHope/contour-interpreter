@@ -1,6 +1,8 @@
 <?php
 
-namespace bnjhope\php_parser;
+namespace bnjhope\php_parser\evaluators;
+
+use bnjhope\php_parser\expressions\iExpression;
 
 class ExprEvaluator {
 
