@@ -29,7 +29,9 @@ class ExprEvaluator {
         //do this until all instructions have been evaluated.
         $endOfFunction = count($function) == 0;
 
-        while(!$endOfFunction ) {
+        $result = null;
+
+        while(!$endOfFunction && $result == null ) {
             $result = $function[$this->instrPtr++]->evaluate();
         }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace bnjhope\php_parser;
+use Exception;
 
 /**
  * Class ParseStack

@@ -19,7 +19,7 @@ class OverallTests extends TestCase
      * The overall evaluator.
      * @var FunctionParser
      */
-    private $evaluator;
+    public static $evaluator;
 
     public static function setUpBeforeClass()
     {
@@ -33,7 +33,7 @@ class OverallTests extends TestCase
 
         $result = "\"yes\"";
 
-        $this->assertEquals($result, $this->evaluator->resolve($stringToTest));
+        $this->assertEquals($result, self::$evaluator->resolve($stringToTest));
     }
 
 }
