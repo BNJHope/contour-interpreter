@@ -32,6 +32,7 @@ class ExprParserController
     private $instructPtr;
 
     /**
+     * @var array
      * The objects which have been parsed by the parser.
      */
     private $function;
@@ -83,7 +84,7 @@ class ExprParserController
             //then there is a possibility that a previous if statement checked to see if it was an else expression, found it
             // was not and then terminated.
             //Therefore, check to see if there are any non else expressions left over and fetch it from the list of instructions.
-            if($this->instructPtr > 0 && !($this->getCurrentElement() instanceof ElseExpression))
+            if($this->instructPtr > 0 && ($this->getCurrentElement() instanceof ElseExpression))
                 $parsedLine = $this->getCurrentElement();
             else {
 
@@ -106,7 +107,6 @@ class ExprParserController
 
             //push the expression that was parsed into the array of expressions to be evaluated after
             //all of the parsing is complete
-
 
             array_push($this->function, $exprToAdd);
         }
@@ -264,6 +264,11 @@ class ExprParserController
         //set the array of lines to parse as the string to parse
         //split at every occurrence of the new line character
         $this->linesToParse = explode("\r\n", $stringToParse);
+
+        //trim any white space in the lines
+        for($i = 0; $i < count($this->linesToParse); $i++) {
+            $this->linesToParse[$i] = trim($this->linesToParse[$i]);
+        }
 
         //set the instruction pointer back to the beginning
         $this->instructPtr = 0;

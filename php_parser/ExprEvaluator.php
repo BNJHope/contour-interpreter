@@ -22,7 +22,7 @@ class ExprEvaluator {
      * Whatever the result of the function might be.
      */
     public function evaluate($function) {
-
+        $this->instrPtr = 0;
         //while there are still instructions in the function array to be processed
         //or while result is still null
         //set the result as the evaluation of the current function.
@@ -32,10 +32,11 @@ class ExprEvaluator {
         $result = null;
 
         while(!$endOfFunction && $result == null ) {
-
-            $result = $function[$this->instrPtr++]->evaluate();
-            if($this->instrPtr >= count($function))
+            $result = $function[$this->instrPtr]->evaluate();
+            $this->instrPtr++;
+            if($this->instrPtr >= count($function)) {
                 $endOfFunction = true;
+            }
         }
 
         return $result;

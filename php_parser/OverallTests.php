@@ -28,8 +28,8 @@ class OverallTests extends TestCase
 
     public function testNormalIf() {
         $stringToTest = "if 5 = 6
-        then return \"no\"
-        else return \"yes\"";
+then return \"no\"
+else return \"yes\"";
 
         $result = "\"yes\"";
 

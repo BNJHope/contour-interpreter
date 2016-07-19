@@ -133,13 +133,10 @@ class IfStatement implements iExpression
         else {
 
             while($elseInstrCounter < count($this->elseConstructors) && $elseRes == null) {
-                $string = "";
                 $elseRes = $this->elseConstructors[$elseInstrCounter]->evaluate();
                 $elseInstrCounter++;
             }
         }
-
-        $string = "";
 
         return $elseRes;
     }

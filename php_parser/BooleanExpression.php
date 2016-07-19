@@ -105,6 +105,7 @@ class BooleanExpression implements iExpression {
         } catch (ExpressionEvaluationException $e) {
             throw new ExpressionEvaluationException($e);
         }
+        $string = "";
 
         //if there is only a left hand side expression
         if($this->operator == null) {
@@ -120,6 +121,8 @@ class BooleanExpression implements iExpression {
             } catch (ExpressionEvaluationException $e) {
                 throw new ExpressionEvaluationException($e);
             }
+
+            $string = "";
 
             //return true or false depending on the two values
             switch ($this->operator->evaluate()) {

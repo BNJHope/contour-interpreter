@@ -46,19 +46,12 @@ class RawValueExpression implements iExpression
      */
     public function evaluate()
     {
-        $test1 = substr($this->value, -1);
-        $test2 = substr($this->value, 0, 1);
-        $string = "";
         switch(true) {
             case (substr($this->value, -1) == "\"") && (substr($this->value, 0, 1) == "\"") :
                 return $this->value;
             //if it scans correctly as an integer
-            case (sscanf($this->value, "%d")) :
+            case (is_numeric($this->value)) :
                 return intval($this->value);
-
-            //if it scans correctly as a floating point number
-            case (sscanf($this->value, "%f")) :
-                return floatval($this->value);
 
             //if the value is true
             case($this->value == "true") :
@@ -71,7 +64,7 @@ class RawValueExpression implements iExpression
             //otherwise check to see if it is a variable name
             default :
                 try {
-                    VariableMap::getVariable($this->value);
+                    return VariableMap::getVariable($this->value);
                 } catch (ExpressionEvaluationException $e) {
                     throw new ExpressionEvaluationException($e);
                 }

@@ -32,10 +32,19 @@ class EvaluatorTests extends TestCase
 
     public function testIf() {
         $structToTest = self::$parser->parse("if 4 = 7
-then return \"should not return\"
-else return \"should return\"");
+            then return \"should not return\"
+            else return \"should return\"");
 
         $this->assertEquals("\"should return\"" ,self::$evaluator->evaluate($structToTest));
     }
 
+    public function testNormal() {
+        $structToTest = self::$parser->parse("let a = 5
+        if a = 4
+        then return 4
+        else if a = 5
+        then return a");
+
+        $this->assertEquals(5,self::$evaluator->evaluate($structToTest));
+    }
 }

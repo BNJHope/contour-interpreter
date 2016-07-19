@@ -15,16 +15,7 @@ class VariableMap
      * The array that maps the identifiers of variables to their values.
      * @var array
      */
-    private static $variables;
-
-    /**
-     * Initialises the variables array.
-     * VariableMap constructor
-     */
-    public function __construct()
-    {
-        self::$variables = array();
-    }
+    private static $variables = array();
 
     /**
      * Gets the value stored in the variables map at the given key.
