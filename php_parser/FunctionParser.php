@@ -1,8 +1,11 @@
 <?php
 
-namespace bnjhope\php_parser\tests;
+namespace bnjhope\php_parser;
 
-require "../vendor/autoload.php";
+use bnjhope\php_parser\evaluators\ExprEvaluator;
+use bnjhope\php_parser\exceptions\ExpressionEvaluationException;
+use bnjhope\php_parser\exceptions\ExpressionParseException;
+use bnjhope\php_parser\parsers\ExprParserController;
 
 /**
  * Overall class for managing parsing and evaluating functions passed to it.

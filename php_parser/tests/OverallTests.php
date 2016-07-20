@@ -1,11 +1,10 @@
 <?php
-
 namespace bnjhope\php_parser\tests;
+
+require '../../vendor/autoload.php';
 
 use bnjhope\php_parser\FunctionParser;
 use PHPUnit\Framework\TestCase;
-
-require '../../vendor/autoload.php';
 
 /**
  * Created by PhpStorm.
@@ -28,13 +27,24 @@ class OverallTests extends TestCase
     }
 
     public function testNormalIf() {
-        $stringToTest = "if 5 = 6
-then return \"no\"
-else return \"yes\"";
+        $stringToTest = "let a = 5
+        if a = 4
+        then return 4
+        else if a = 5
+        then return a";
 
-        $result = "\"yes\"";
+        $result = 5;
 
         $this->assertEquals($result, self::$evaluator->resolve($stringToTest));
     }
 
+    public function testNormal() {
+        $structToTest = "let a = 5
+        if a = 4
+        then return 4
+        else if a = 5
+        then return a";
+
+        $this->assertEquals(5,self::$evaluator->resolve($structToTest));
+    }
 }
