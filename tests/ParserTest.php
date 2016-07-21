@@ -2,9 +2,15 @@
 
 namespace bnjhope\php_parser\tests;
 
-use PHPUnit\Framework\TestCase;
-
-require '../vendor/autoload.php';
+use bnjhope\php_parser\expressions\BooleanExpression;
+use bnjhope\php_parser\expressions\OperationExpression;
+use bnjhope\php_parser\expressions\RawValueExpression;
+use bnjhope\php_parser\expressions\ResultObject;
+use bnjhope\php_parser\expressions\TagExpression;
+use bnjhope\php_parser\expressions\ThenExpression;
+use bnjhope\php_parser\expressions\VariableDeclarationExpression;
+use bnjhope\php_parser\parsers\ExprParser;
+use PHPUnit_Framework_TestCase;
 
 /**
  * Created by PhpStorm.
@@ -13,7 +19,7 @@ require '../vendor/autoload.php';
  * Time: 10:07
  */
 
-class ParserTests extends TestCase
+class ParserTest extends PHPUnit_Framework_TestCase
 {
 
     /**

@@ -6,10 +6,15 @@
             "email": "ben3@lougeek.com"
         }
     ],
-    "require": {},
+    "require": {
+
+    },
+  "require-dev":{
+    "phpunit/phpunit": "~4.0"
+  },
     "autoload": {
         "psr-4": {
-            "bnjhope\\php_parser\\": "php_parser/"
+            "bnjhope\\php_parser\\": "src/"
         }
     }
 }

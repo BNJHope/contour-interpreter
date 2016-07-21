@@ -1,18 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Owner
- * Date: 19/07/2016
- * Time: 10:46
- */
 
 namespace bnjhope\php_parser\tests;
 
-use PHPUnit\Framework\TestCase;
 
-require '../vendor/autoload.php';
+use bnjhope\php_parser\evaluators\ExprEvaluator;
+use bnjhope\php_parser\parsers\ExprParserController;
+use PHPUnit_Framework_TestCase;
 
-class EvaluatorTests extends TestCase
+class EvaluatorTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var ExprEvaluator

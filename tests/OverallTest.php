@@ -1,10 +1,8 @@
 <?php
 namespace bnjhope\php_parser\tests;
 
-require '../../vendor/autoload.php';
-
 use bnjhope\php_parser\FunctionParser;
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase;
 
 /**
  * Created by PhpStorm.
@@ -12,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * Date: 19/07/2016
  * Time: 09:42
  */
-class OverallTests extends TestCase
+class OverallTest extends PHPUnit_Framework_TestCase
 {
 
     /**

@@ -10,9 +10,8 @@ use bnjhope\php_parser\expressions\TagExpression;
 use bnjhope\php_parser\expressions\ThenExpression;
 use bnjhope\php_parser\expressions\VariableDeclarationExpression;
 use bnjhope\php_parser\parsers\ExprParserController;
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase;
 
-require '../vendor/autoload.php';
 
 /**
  * Created by PhpStorm.
@@ -20,7 +19,7 @@ require '../vendor/autoload.php';
  * Date: 15/07/2016
  * Time: 16:11
  */
-class ExprControllerTests extends TestCase
+class ExprControllerTest extends PHPUnit_Framework_TestCase
 {
 
     /**
