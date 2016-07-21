@@ -1,20 +1,25 @@
 {
-    "name": "owner/evergreen-function-parser",
-    "authors": [
-        {
-            "name": "bnjhope",
-            "email": "ben3@lougeek.com"
-        }
-    ],
-    "require": {
-
+  "name": "contour/parser",
+  "authors": [
+    {
+      "name": "Ben Hope",
+      "email": "ben3@lougeek.com",
+      "role": "Developer"
     },
-  "require-dev":{
+    {
+      "name": "Jason Gallavin",
+      "email": "jasong@lougeek.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+  },
+  "require-dev": {
     "phpunit/phpunit": "~4.0"
   },
-    "autoload": {
-        "psr-4": {
-            "bnjhope\\php_parser\\": "src/"
-        }
+  "autoload": {
+    "psr-4": {
+      "bnjhope\\php_parser\\": "src/"
     }
+  }
 }
