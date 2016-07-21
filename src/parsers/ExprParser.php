@@ -588,6 +588,11 @@ class ExprParser
         $closeBraceFound = false;
 
         /**
+         * An array of the tags that form the datablock
+         */
+        $tags = array();
+
+        /**
          * The name of the tag being parsed - everything upto the close brace.
          */
         $tagName = "";
@@ -600,10 +605,19 @@ class ExprParser
         //get the tag name - the string upto the last brace - but break if it reaches the end of the line.
         while (!$closeBraceFound && $this->isNext()) {
             $currentChar = $this->getNextChar();
-            if ($currentChar == ")") {
-                $closeBraceFound = true;
-            } else {
-                $tagName .= $currentChar;
+            switch($currentChar) {
+                case "," :
+                    $tagName = trim($tagName);
+                    array_push($tags, $tagName);
+                    $tagName = "";
+                    break;
+
+                case ")" :
+                    $tagName = trim($tagName);
+                    array_push($tags, $tagName);
+                    $tagName = "";
+                    $closeBraceFound = true;
+                    break;
             }
         }
 
@@ -613,7 +627,7 @@ class ExprParser
         }
 
         //set the tag name in the result structure to the tag name parsed
-        $result->setTag($tagName);
+        $result->setTags($tags);
 
         return $result;
     }

@@ -15,6 +15,22 @@ class TagExpression implements iExpression
      */
     private $tags;
 
+    /**
+     * @return \string[]
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param \string[] $tags
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+    }
+
     public function evaluate()
     {
         // TODO: Implement evaluate() method.
