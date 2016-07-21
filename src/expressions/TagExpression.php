@@ -10,26 +10,10 @@ use contour\parser\expressions\iExpression;
 class TagExpression implements iExpression
 {
     /**
-     * @var string
+     * @var string[]
      * The tag stored by the expression.
      */
-    private $tag;
-
-    /**
-     * @return string
-     */
-    public function getTag()
-    {
-        return $this->tag;
-    }
-
-    /**
-     * @param string $tag
-     */
-    public function setTag($tag)
-    {
-        $this->tag = $tag;
-    }
+    private $tags;
 
     public function evaluate()
     {
@@ -38,7 +22,16 @@ class TagExpression implements iExpression
 
     public function __toString()
     {
-        return "#(" . $this->tag . ")";
+        /**
+         * @var string
+         */
+        $tagString = "";
+        for($i = 0; $i < count($this->tags); $i++){
+            $tagString .= $this->tags[$i];
+            if($i < count($this->tags) - 1)
+                $tagString .= ",";
+        }
+        return "#(" . $tagString . ")";
     }
 
     public static function withValues($tag){

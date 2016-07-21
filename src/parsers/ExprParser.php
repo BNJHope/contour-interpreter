@@ -13,7 +13,7 @@ use contour\parser\expressions\TagExpression;
 use contour\parser\expressions\ThenExpression;
 use contour\parser\expressions\VariableDeclarationExpression;
 use contour\parser\parsers\ParseStack;
-use contour\parser\StackEmptyException;
+use contour\parser\exceptions\StackEmptyException;
 
 /**
  * Class ExprParser
@@ -88,11 +88,7 @@ class ExprParser
          * @var string
          * The first word in the line - determines the type of command that the line specifies.
          */
-        try {
-            $expressionType = $this->getType();
-        } catch (ExpressionParseException $e) {
-            throw new ExpressionParseException($e);
-        }
+        $expressionType = $this->getType();
 
         //depending on the first word of the expression, parse the part after that first word.
         switch ($expressionType) {
@@ -209,11 +205,7 @@ class ExprParser
 
                     //make the expression to add the parsed reference tag
                     //if there are problems parsing, then throw that exception.
-                    try {
-                        $exprToAdd = $this->parseTag();
-                    } catch (ExpressionParseException $e) {
-                        throw new ExpressionParseException($e);
-                    }
+                    $exprToAdd = $this->parseTag();
 
                     //if the first expression is null then that means that the tag should take the place
                     //of the first expression
@@ -240,13 +232,7 @@ class ExprParser
                     if ($result->getFirstExpr() == null) {
 
                         //try to set the first expression of the result to this subexpression
-                        try {
-                            $result->setFirstExpr($this->parseIf());
-                        } catch (ExpressionParseException $e) {
-                            throw new ExpressionParseException ($e);
-                        } catch (StackEmptyException $e) {
-                            throw new StackEmptyException($e);
-                        }
+                        $result->setFirstExpr($this->parseIf());
                     } elseif ($result->getSecondExpr() == null) {
 
                         //try to set the second expression of the result to this subexpression
@@ -383,29 +369,17 @@ class ExprParser
 
             //if it is another if statement
             case $this->linestarts[0] :
-                try {
-                    $resultObject->setSubExpression($this->parseIf());
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject->setSubExpression($this->parseIf());
                 break;
 
             //if it is a variable declaration
             case $this->linestarts[3] :
-                try {
-                    $resultObject->setSubExpression($this->parseVariable());
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject->setSubExpression($this->parseVariable());
                 break;
 
             //if it is a return statement
             case $this->linestarts[4] :
-                try {
-                    $resultObject->setSubExpression($this->parseReturn());
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject->setSubExpression($this->parseReturn());
                 break;
             default :
                 throw new ExpressionParseException("Invalid instruction following the THEN statement");
@@ -475,7 +449,7 @@ class ExprParser
 
         //put the rest of the line as the result container
         while ($this->isNext()) {
-            $resString = $resString . $this->getNextChar();
+            $resString .= $this->getNextChar();
         }
 
         //make the result value the string from the stack.
@@ -629,7 +603,7 @@ class ExprParser
             if ($currentChar == ")") {
                 $closeBraceFound = true;
             } else {
-                $tagName = $tagName . $currentChar;
+                $tagName .= $currentChar;
             }
         }
 
