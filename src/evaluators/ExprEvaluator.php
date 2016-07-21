@@ -4,6 +4,10 @@ namespace bnjhope\php_parser\evaluators;
 
 use bnjhope\php_parser\expressions\iExpression;
 
+/**
+ * Class ExprEvaluator
+ * @package bnjhope\php_parser\evaluators
+ */
 class ExprEvaluator {
 
     /**

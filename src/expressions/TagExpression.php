@@ -4,10 +4,8 @@ namespace bnjhope\php_parser\expressions;
 use bnjhope\php_parser\expressions\iExpression;
 
 /**
- * Created by PhpStorm.
- * User: Owner
- * Date: 14/07/2016
- * Time: 08:49
+ * Class TagExpression
+ * @package bnjhope\php_parser\expressions
  */
 class TagExpression implements iExpression
 {

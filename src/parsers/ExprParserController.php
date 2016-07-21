@@ -12,6 +12,10 @@ use bnjhope\php_parser\parsers\ExprParser;
 
 include 'ExprParser.php';
 
+/**
+ * Class ExprParserController
+ * @package bnjhope\php_parser\parsers
+ */
 class ExprParserController
 {
 
@@ -271,7 +275,7 @@ class ExprParserController
 
         //set the array of lines to parse as the string to parse
         //split at every occurrence of the new line character
-        $this->linesToParse = explode("\r\n", $stringToParse);
+        $this->linesToParse = explode("\n", $stringToParse);
 
         //trim any white space in the lines
         for($i = 0; $i < count($this->linesToParse); $i++) {

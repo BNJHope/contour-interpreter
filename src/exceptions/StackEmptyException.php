@@ -10,6 +10,10 @@ namespace bnjhope\php_parser\exceptions;
 
 use Exception;
 
+/**
+ * Class StackEmptyException
+ * @package bnjhope\php_parser\exceptions
+ */
 class StackEmptyException extends Exception
 {
 

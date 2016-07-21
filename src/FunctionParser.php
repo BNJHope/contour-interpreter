@@ -8,11 +8,8 @@ use bnjhope\php_parser\exceptions\ExpressionParseException;
 use bnjhope\php_parser\parsers\ExprParserController;
 
 /**
- * Overall class for managing parsing and evaluating functions passed to it.
- * Created by PhpStorm.
- * User: Owner
- * Date: 18/07/2016
- * Time: 15:36
+ * Class FunctionParser Overall class for managing parsing and evaluating functions passed to it.
+ * @package bnjhope\php_parser
  */
 class FunctionParser
 {

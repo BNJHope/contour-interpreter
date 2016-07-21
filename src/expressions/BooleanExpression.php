@@ -3,10 +3,8 @@
 namespace bnjhope\php_parser\expressions;
 
 /**
- * Created by PhpStorm.
- * User: Owner
- * Date: 12/07/2016
- * Time: 09:06
+ * Class BooleanExpression
+ * @package bnjhope\php_parser\expressions
  */
 class BooleanExpression implements iExpression {
 

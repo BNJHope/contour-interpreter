@@ -4,10 +4,8 @@ namespace bnjhope\php_parser\expressions;
 use bnjhope\php_parser\expressions\iExpression;
 
 /**
- * Created by PhpStorm.
- * User: Owner
- * Date: 11/07/2016
- * Time: 10:57
+ * Class ResultObject
+ * @package bnjhope\php_parser\expressions
  */
 class ResultObject implements iExpression
 {

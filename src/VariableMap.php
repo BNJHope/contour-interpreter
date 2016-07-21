@@ -4,10 +4,8 @@ namespace bnjhope\php_parser;
 use bnjhope\php_parser\exceptions\ExpressionEvaluationException;
 
 /**
- * Created by PhpStorm.
- * User: Owner
- * Date: 18/07/2016
- * Time: 10:51
+ * Class VariableMap
+ * @package bnjhope\php_parser
  */
 class VariableMap
 {

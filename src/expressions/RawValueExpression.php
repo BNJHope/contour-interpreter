@@ -6,10 +6,8 @@ use bnjhope\php_parser\expressions\iExpression;
 use bnjhope\php_parser\VariableMap;
 
 /**
- * Created by PhpStorm.
- * User: Owner
- * Date: 12/07/2016
- * Time: 09:16
+ * Class RawValueExpression
+ * @package bnjhope\php_parser\expressions
  */
 class RawValueExpression implements iExpression
 {

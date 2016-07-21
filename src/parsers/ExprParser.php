@@ -15,6 +15,10 @@ use bnjhope\php_parser\expressions\VariableDeclarationExpression;
 use bnjhope\php_parser\parsers\ParseStack;
 use bnjhope\php_parser\StackEmptyException;
 
+/**
+ * Class ExprParser
+ * @package bnjhope\php_parser\parsers
+ */
 class ExprParser
 {
 

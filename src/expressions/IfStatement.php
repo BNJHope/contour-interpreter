@@ -8,10 +8,8 @@ use bnjhope\php_parser\expressions\iExpression;
 use bnjhope\php_parser\expressions\ThenExpression;
 
 /**
- * Created by PhpStorm.
- * User: Owner
- * Date: 12/07/2016
- * Time: 16:37
+ * Class IfStatement
+ * @package bnjhope\php_parser\expressions
  */
 class IfStatement implements iExpression
 {
