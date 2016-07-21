@@ -1,7 +1,7 @@
 <?php
 
-namespace bnjhope\php_parser\expressions;
-use bnjhope\php_parser\expressions\iExpression;
+namespace contour\parser\expressions;
+use contour\parser\expressions\iExpression;
 
 /**
  * Class ResultObject

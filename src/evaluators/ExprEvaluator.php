@@ -1,8 +1,8 @@
 <?php
 
-namespace bnjhope\php_parser\evaluators;
+namespace contour\parser\evaluators;
 
-use bnjhope\php_parser\expressions\iExpression;
+use contour\parser\expressions\iExpression;
 
 /**
  * Class ExprEvaluator

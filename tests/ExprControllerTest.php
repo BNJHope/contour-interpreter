@@ -1,15 +1,15 @@
 <?php
 
-namespace bnjhope\php_parser;
+namespace contour\parser;
 
-use bnjhope\php_parser\expressions\BooleanExpression;
-use bnjhope\php_parser\expressions\IfStatement;
-use bnjhope\php_parser\expressions\RawValueExpression;
-use bnjhope\php_parser\expressions\ResultObject;
-use bnjhope\php_parser\expressions\TagExpression;
-use bnjhope\php_parser\expressions\ThenExpression;
-use bnjhope\php_parser\expressions\VariableDeclarationExpression;
-use bnjhope\php_parser\parsers\ExprParserController;
+use contour\parser\expressions\BooleanExpression;
+use contour\parser\expressions\IfStatement;
+use contour\parser\expressions\RawValueExpression;
+use contour\parser\expressions\ResultObject;
+use contour\parser\expressions\TagExpression;
+use contour\parser\expressions\ThenExpression;
+use contour\parser\expressions\VariableDeclarationExpression;
+use contour\parser\parsers\ExprParserController;
 use PHPUnit_Framework_TestCase;
 
 

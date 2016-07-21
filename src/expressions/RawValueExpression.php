@@ -1,9 +1,9 @@
 <?php
 
-namespace bnjhope\php_parser\expressions;
-use bnjhope\php_parser\exceptions\ExpressionEvaluationException;
-use bnjhope\php_parser\expressions\iExpression;
-use bnjhope\php_parser\VariableMap;
+namespace contour\parser\expressions;
+use contour\parser\exceptions\ExpressionEvaluationException;
+use contour\parser\expressions\iExpression;
+use contour\parser\VariableMap;
 
 /**
  * Class RawValueExpression

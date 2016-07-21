@@ -1,8 +1,8 @@
 <?php
 
-namespace bnjhope\php_parser\expressions;
-use bnjhope\php_parser\expressions\iExpression;
-use bnjhope\php_parser\VariableMap;
+namespace contour\parser\expressions;
+use contour\parser\expressions\iExpression;
+use contour\parser\VariableMap;
 
 /**
  * Class VariableDeclarationExpression

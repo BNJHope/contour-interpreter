@@ -1,7 +1,7 @@
 <?php
 
-namespace bnjhope\php_parser\parsers;
-use bnjhope\php_parser\StackEmptyException;
+namespace contour\parser\parsers;
+use contour\parser\StackEmptyException;
 use Exception;
 
 /**

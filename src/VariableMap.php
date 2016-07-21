@@ -1,7 +1,7 @@
 <?php
 
-namespace bnjhope\php_parser;
-use bnjhope\php_parser\exceptions\ExpressionEvaluationException;
+namespace contour\parser;
+use contour\parser\exceptions\ExpressionEvaluationException;
 
 /**
  * Class VariableMap

@@ -1,19 +1,19 @@
 <?php
 
-namespace bnjhope\php_parser\parsers;
+namespace contour\parser\parsers;
 
-use bnjhope\php_parser\expressions\BooleanExpression;
-use bnjhope\php_parser\exceptions\ExpressionParseException;
-use bnjhope\php_parser\expressions\ElseExpression;
-use bnjhope\php_parser\expressions\iExpression;
-use bnjhope\php_parser\expressions\OperationExpression;
-use bnjhope\php_parser\expressions\RawValueExpression;
-use bnjhope\php_parser\expressions\ResultObject;
-use bnjhope\php_parser\expressions\TagExpression;
-use bnjhope\php_parser\expressions\ThenExpression;
-use bnjhope\php_parser\expressions\VariableDeclarationExpression;
-use bnjhope\php_parser\parsers\ParseStack;
-use bnjhope\php_parser\StackEmptyException;
+use contour\parser\expressions\BooleanExpression;
+use contour\parser\exceptions\ExpressionParseException;
+use contour\parser\expressions\ElseExpression;
+use contour\parser\expressions\iExpression;
+use contour\parser\expressions\OperationExpression;
+use contour\parser\expressions\RawValueExpression;
+use contour\parser\expressions\ResultObject;
+use contour\parser\expressions\TagExpression;
+use contour\parser\expressions\ThenExpression;
+use contour\parser\expressions\VariableDeclarationExpression;
+use contour\parser\parsers\ParseStack;
+use contour\parser\StackEmptyException;
 
 /**
  * Class ExprParser

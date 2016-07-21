@@ -1,11 +1,11 @@
 <?php
 
-namespace bnjhope\php_parser;
+namespace contour\parser;
 
-use bnjhope\php_parser\evaluators\ExprEvaluator;
-use bnjhope\php_parser\exceptions\ExpressionEvaluationException;
-use bnjhope\php_parser\exceptions\ExpressionParseException;
-use bnjhope\php_parser\parsers\ExprParserController;
+use contour\parser\evaluators\ExprEvaluator;
+use contour\parser\exceptions\ExpressionEvaluationException;
+use contour\parser\exceptions\ExpressionParseException;
+use contour\parser\parsers\ExprParserController;
 
 /**
  * Class FunctionParser Overall class for managing parsing and evaluating functions passed to it.

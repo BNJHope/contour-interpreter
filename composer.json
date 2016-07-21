@@ -1,5 +1,6 @@
 {
   "name": "contour/parser",
+  "type": "library",
   "authors": [
     {
       "name": "Ben Hope",
@@ -19,7 +20,7 @@
   },
   "autoload": {
     "psr-4": {
-      "bnjhope\\php_parser\\": "src/"
+      "contour\\parser\\": "src/"
     }
   }
 }
