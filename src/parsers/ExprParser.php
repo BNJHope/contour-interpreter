@@ -7,6 +7,7 @@ use contour\parser\exceptions\ExpressionParseException;
 use contour\parser\expressions\ElseExpression;
 use contour\parser\expressions\iExpression;
 use contour\parser\expressions\OperationExpression;
+use contour\parser\expressions\ParamsExpression;
 use contour\parser\expressions\RawValueExpression;
 use contour\parser\expressions\ResultObject;
 use contour\parser\expressions\TagExpression;
@@ -109,6 +110,7 @@ class ExprParser
                 break;
             case $this->linestarts[5] :
                 $resultObject = $this->parseParams();
+                break;
             default :
                 throw new ExpressionParseException("Parser failed to recognise command keyword - check first word");
         }
@@ -609,14 +611,12 @@ class ExprParser
             $currentChar = $this->getNextChar();
             switch ($currentChar) {
                 case "," :
-                    $tagName = trim($tagName);
-                    array_push($tags, $tagName);
+                    array_push($tags, trim($tagName));
                     $tagName = "";
                     break;
 
                 case ")" :
-                    $tagName = trim($tagName);
-                    array_push($tags, $tagName);
+                    array_push($tags, trim($tagName));
                     $closeBraceFound = true;
                     break;
 
@@ -634,6 +634,59 @@ class ExprParser
         $result->setTags($tags);
 
         return $result;
+    }
+
+    /**
+     * Parses the parameters statement for the function to use.
+     * @return ParamsExpression
+     * @throws ExpressionParseException
+     */
+    function parseParams(){
+
+        /**
+         * An array of the parameters to be used in the function.
+         */
+        $params = array();
+
+        /**
+         * The current character that the parser index is pointing to in the instruction.
+         */
+        $currentChar = "";
+
+        /**
+         * Determines whether the parser has found a close brace yet or not.
+         * @var bool
+         */
+        $closeBraceFound = false;
+
+        /**
+         * The name of the current paramter being read in by the parser.
+         */
+        $paramName = "";
+
+        if($this->getNextChar() != "(")
+            throw new ExpressionParseException("No open brace found for parameter expression");
+
+        while(!$closeBraceFound && $this->isNext()) {
+            $currentChar = $this->getNextChar();
+            switch($currentChar) {
+                case "," :
+                    array_push($params, trim($paramName));
+                    $paramName = "";
+                    break;
+                case ")" :
+                    array_push($params, trim($paramName));
+                    $closeBraceFound = true;
+                    break;
+                default :
+                    $paramName .= $currentChar;
+            }
+        }
+
+        if(!$closeBraceFound)
+            throw new ExpressionParseException("Failed to find close brace on paramaters declaration.");
+
+        return new ParamsExpression($params);
     }
 
     /**
