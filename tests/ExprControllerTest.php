@@ -4,6 +4,7 @@ namespace contour\parser;
 
 use contour\parser\expressions\BooleanExpression;
 use contour\parser\expressions\IfStatement;
+use contour\parser\expressions\OperationExpression;
 use contour\parser\expressions\RawValueExpression;
 use contour\parser\expressions\ResultObject;
 use contour\parser\expressions\TagExpression;
