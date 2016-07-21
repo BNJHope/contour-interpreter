@@ -8,6 +8,7 @@
 
 namespace contour\parser\expressions;
 
+use contour\parser\VariableMap;
 
 class FunctionContainer
 {
@@ -19,7 +20,10 @@ class FunctionContainer
     private $functionTree;
 
     /**
-     *
+     *The variable map for the function.
+     * @var VariableMap
      */
+    private $variableMap;
+
 
 }
