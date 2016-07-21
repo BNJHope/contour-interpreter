@@ -166,12 +166,10 @@ class ParserTest extends PHPUnit_Framework_TestCase
     }
 
     public function testTagExpression(){
-        $objToTest = TagExpression::withValues("test");
+        $objToTest = TagExpression::withValues(array("test", "test2"));
 
         $objToTest = VariableDeclarationExpression::withValues(new RawValueExpression("a"), $objToTest);
 
-        $this->assertEquals($objToTest, self::$parser->parse("let a = #(test)"));
+        $this->assertEquals($objToTest, self::$parser->parse("let a = #(test, test2)"));
     }
-
-
 }

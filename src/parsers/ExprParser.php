@@ -615,9 +615,10 @@ class ExprParser
                 case ")" :
                     $tagName = trim($tagName);
                     array_push($tags, $tagName);
-                    $tagName = "";
                     $closeBraceFound = true;
                     break;
+                default :
+                    $tagName .= $currentChar;
             }
         }
 

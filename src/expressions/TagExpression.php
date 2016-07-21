@@ -50,9 +50,9 @@ class TagExpression implements iExpression
         return "#(" . $tagString . ")";
     }
 
-    public static function withValues($tag){
+    public static function withValues($tags){
         $instance = new self();
-        $instance->setTag($tag);
+        $instance->setTags($tags);
         return $instance;
     }
 }
