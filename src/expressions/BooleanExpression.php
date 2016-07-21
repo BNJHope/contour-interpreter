@@ -2,6 +2,7 @@
 
 namespace contour\parser\expressions;
 
+use contour\parser\exceptions\ExpressionEvaluationException;
 /**
  * Class BooleanExpression
  * @package bnjhope\php_parser\expressions
@@ -98,11 +99,7 @@ class BooleanExpression implements iExpression {
     public function evaluate(){
 
         //try and get the first side of the expression
-        try {
-            $leftHandSide = $this->firstExpr->evaluate();
-        } catch (ExpressionEvaluationException $e) {
-            throw new ExpressionEvaluationException($e);
-        }
+        $leftHandSide = $this->firstExpr->evaluate();
         $string = "";
 
         //if there is only a left hand side expression
@@ -114,13 +111,7 @@ class BooleanExpression implements iExpression {
         } else {
 
             //get the second expression if it exists
-            try {
-                $rightHandSide = $this->secondExpr->evaluate();
-            } catch (ExpressionEvaluationException $e) {
-                throw new ExpressionEvaluationException($e);
-            }
-
-            $string = "";
+            $rightHandSide = $this->secondExpr->evaluate();
 
             //return true or false depending on the two values
             switch ($this->operator->evaluate()) {
