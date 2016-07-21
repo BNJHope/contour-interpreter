@@ -45,4 +45,13 @@ class OverallTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(5,self::$evaluator->resolve($structToTest));
     }
+
+    public function testShouldReturnString() {
+
+        $stringToTest = "if 4 = 7
+            then return \"should not return\"
+            else return \"should return\"";
+
+        $this->assertEquals("\"should return\"", self::$evaluator->resolve($stringToTest));
+    }
 }
