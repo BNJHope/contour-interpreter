@@ -1,8 +1,7 @@
 <?php
 
 namespace contour\parser\parsers;
-use contour\parser\StackEmptyException;
-use Exception;
+use contour\parser\exceptions\StackEmptyException;
 
 /**
  * Class ParseStack
