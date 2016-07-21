@@ -561,10 +561,10 @@ class ExprParser
 
             $result->setValue(new RawValueExpression($exprToAdd));
 
-        //if all values are filled then do nothing
+            //if all values are filled then do nothing
         } else if ($result->getIdentifier() != null && $result->getValue() != null) {
 
-        //any other exceptions, throw this exception
+            //any other exceptions, throw this exception
         } else {
             throw new ExpressionParseException("Invalid variable declaration.");
         }
@@ -605,7 +605,7 @@ class ExprParser
         //get the tag name - the string upto the last brace - but break if it reaches the end of the line.
         while (!$closeBraceFound && $this->isNext()) {
             $currentChar = $this->getNextChar();
-            switch($currentChar) {
+            switch ($currentChar) {
                 case "," :
                     $tagName = trim($tagName);
                     array_push($tags, $tagName);
@@ -617,6 +617,7 @@ class ExprParser
                     array_push($tags, $tagName);
                     $closeBraceFound = true;
                     break;
+
                 default :
                     $tagName .= $currentChar;
             }

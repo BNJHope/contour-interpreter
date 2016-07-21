@@ -1,6 +1,7 @@
 <?php
 
 namespace contour\parser\expressions;
+
 use contour\parser\expressions\iExpression;
 
 /**
@@ -42,15 +43,18 @@ class TagExpression implements iExpression
          * @var string
          */
         $tagString = "";
-        for($i = 0; $i < count($this->tags); $i++){
+
+        for ($i = 0; $i < count($this->tags); $i++) {
             $tagString .= $this->tags[$i];
-            if($i < count($this->tags) - 1)
+            if ($i < count($this->tags) - 1)
                 $tagString .= ",";
         }
+
         return "#(" . $tagString . ")";
     }
 
-    public static function withValues($tags){
+    public static function withValues($tags)
+    {
         $instance = new self();
         $instance->setTags($tags);
         return $instance;
