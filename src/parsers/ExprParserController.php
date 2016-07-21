@@ -104,7 +104,7 @@ class ExprParserController
                 try {
                     $parsedLine = $this->getNextElement();
                 } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
+                    $this->throwParseError($e);
                 }
             }
 
@@ -185,7 +185,7 @@ class ExprParserController
                 //get the next line of the function
                 $nextLine = $this->getNextElement();
             } catch (ExpressionParseException $e) {
-                throw new ExpressionParseException($e);
+                $this->throwParseError($e);
             }
 
             if(!($nextLine instanceof ElseExpression)) {
