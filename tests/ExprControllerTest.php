@@ -4,6 +4,7 @@ namespace bnjhope\php_parser;
 
 use bnjhope\php_parser\expressions\BooleanExpression;
 use bnjhope\php_parser\expressions\IfStatement;
+use bnjhope\php_parser\expressions\OperationExpression;
 use bnjhope\php_parser\expressions\RawValueExpression;
 use bnjhope\php_parser\expressions\ResultObject;
 use bnjhope\php_parser\expressions\TagExpression;
@@ -40,8 +41,8 @@ class ExprControllerTest extends PHPUnit_Framework_TestCase
         $tagDec = TagExpression::withValues("test");
         $varDec = VariableDeclarationExpression::withValues(new RawValueExpression("a"), $tagDec);
 
-        $boolexpr = BooleanExpression::withValues(new RawValueExpression("a"), new RawValueExpression("<"), new RawValueExpression("7"));
-        $thenexpr = ThenExpression::withValue(new ResultObject("9"));
+        $boolexpr = BooleanExpression::withValues(new RawValueExpression("a"), new OperationExpression("<"), new RawValueExpression("7"));
+        $thenexpr = ThenExpression::withValue(new ResultObject(new RawValueExpression("9")));
         $ifDec = IfStatement::withIfAndThen($boolexpr, $thenexpr);
 
         $func = array($varDec, $ifDec);

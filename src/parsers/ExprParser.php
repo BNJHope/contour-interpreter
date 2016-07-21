@@ -13,7 +13,7 @@ use bnjhope\php_parser\expressions\TagExpression;
 use bnjhope\php_parser\expressions\ThenExpression;
 use bnjhope\php_parser\expressions\VariableDeclarationExpression;
 use bnjhope\php_parser\parsers\ParseStack;
-use bnjhope\php_parser\StackEmptyException;
+use bnjhope\php_parser\exceptions\StackEmptyException;
 
 /**
  * Class ExprParser
@@ -97,39 +97,19 @@ class ExprParser
         //depending on the first word of the expression, parse the part after that first word.
         switch ($expressionType) {
             case $this->linestarts[0] :
-                try {
-                    $resultObject = $this->parseIf();
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject = $this->parseIf();
                 break;
             case $this->linestarts[1] :
-                try {
-                    $resultObject = $this->parseThen();
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject = $this->parseThen();
                 break;
             case $this->linestarts[2] :
-                try {
-                    $resultObject = $this->parseElse();
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject = $this->parseElse();
                 break;
             case $this->linestarts[3] :
-                try {
-                    $resultObject = $this->parseVariable();
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject = $this->parseVariable();
                 break;
             case $this->linestarts[4] :
-                try {
-                    $resultObject = $this->parseReturn();
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject = $this->parseReturn();
                 break;
             default :
                 throw new ExpressionParseException("Parser failed to recognise command keyword - check first word");
@@ -251,7 +231,7 @@ class ExprParser
                         $result->setSecondExpr($exprToAdd);
                         $expressionComplete = true;
                     }
-
+                    break;
                 //parse the sub expression recursively if its an open bracket
                 case "(" :
                     //add open bracket to the stack
@@ -270,13 +250,7 @@ class ExprParser
                     } elseif ($result->getSecondExpr() == null) {
 
                         //try to set the second expression of the result to this subexpression
-                        try {
-                            $result->setSecondExpr($this->parseIf());
-                        } catch (ExpressionParseException $e) {
-                            throw new ExpressionParseException ($e);
-                        } catch (StackEmptyException $e) {
-                            throw new StackEmptyException($e);
-                        }
+                        $result->setSecondExpr($this->parseIf());
 
                         //expression now full - exit the parsing
                         $expressionComplete = true;
@@ -453,32 +427,19 @@ class ExprParser
         $resultObject = new ElseExpression();
 
         switch ($nextInstruction) {
-
             //if it is another if statement
             case $this->linestarts[0] :
-                try {
-                    $resultObject->setSubExpression($this->parseIf());
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject->setSubExpression($this->parseIf());
                 break;
 
             //if it is a variable declaration
             case $this->linestarts[3] :
-                try {
-                    $resultObject->setSubExpression($this->parseVariable());
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject->setSubExpression($this->parseVariable());
                 break;
 
             //if it is a return statement
             case $this->linestarts[4] :
-                try {
-                    $resultObject->setSubExpression($this->parseReturn());
-                } catch (ExpressionParseException $e) {
-                    throw new ExpressionParseException($e);
-                }
+                $resultObject->setSubExpression($this->parseReturn());
                 break;
             default :
                 throw new ExpressionParseException("Invalid instruction following the THEN statement");
@@ -588,11 +549,7 @@ class ExprParser
                 case "#" :
                     //make the expression to add the parsed reference tag
                     //if there are problems parsing, then throw that exception.
-                    try {
-                        $exprToAdd = $this->parseTag();
-                    } catch (ExpressionParseException $e) {
-                        throw new ExpressionParseException($e);
-                    }
+                    $exprToAdd = $this->parseTag();
 
                     //if the first expression is null then that means that the tag should take the place
                     //of the first expression
@@ -635,7 +592,6 @@ class ExprParser
 
         //any other exceptions, throw this exception
         } else {
-
             throw new ExpressionParseException("Invalid variable declaration.");
         }
 
