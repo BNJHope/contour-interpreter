@@ -1,6 +1,6 @@
 <?php
 
-namespace bnjhope\php_parser\expressions;
+namespace contour\parser\expressions;
 
 /**
  * Class BooleanExpression

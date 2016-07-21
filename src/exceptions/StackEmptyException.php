@@ -6,7 +6,7 @@
  * Time: 15:02
  */
 
-namespace bnjhope\php_parser\exceptions;
+namespace contour\parser\exceptions;
 
 use Exception;
 

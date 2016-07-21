@@ -1,7 +1,7 @@
 <?php
-namespace bnjhope\php_parser\tests;
+namespace contour\parser\tests;
 
-use bnjhope\php_parser\FunctionParser;
+use contour\parser\FunctionParser;
 use PHPUnit_Framework_TestCase;
 
 /**

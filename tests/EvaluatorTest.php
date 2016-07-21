@@ -1,10 +1,10 @@
 <?php
 
-namespace bnjhope\php_parser\tests;
+namespace contour\parser\tests;
 
 
-use bnjhope\php_parser\evaluators\ExprEvaluator;
-use bnjhope\php_parser\parsers\ExprParserController;
+use contour\parser\evaluators\ExprEvaluator;
+use contour\parser\parsers\ExprParserController;
 use PHPUnit_Framework_TestCase;
 
 class EvaluatorTest extends PHPUnit_Framework_TestCase
