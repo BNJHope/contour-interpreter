@@ -91,15 +91,15 @@ class BooleanExpression implements iExpression {
 
     /**
      * Evaluates the boolean expression
-     * @return bool
+     * @param \contour\parser\VariableMap $vars
+     * @return bool The result from evaluating the boolean expression.
      * The result from evaluating the boolean expression.
-     * @throws ExpressionEvaluationException
-     * If there is an evaluation error then throw this over to the calling method.
+     * @throws ExpressionEvaluationException If there is an evaluation error then throw this over to the calling method.
      */
-    public function evaluate(){
+    public function evaluate($vars){
 
         //try and get the first side of the expression
-        $leftHandSide = $this->firstExpr->evaluate();
+        $leftHandSide = $this->firstExpr->evaluate($vars);
         $string = "";
 
         //if there is only a left hand side expression
@@ -111,10 +111,10 @@ class BooleanExpression implements iExpression {
         } else {
 
             //get the second expression if it exists
-            $rightHandSide = $this->secondExpr->evaluate();
+            $rightHandSide = $this->secondExpr->evaluate($vars);
 
             //return true or false depending on the two values
-            switch ($this->operator->evaluate()) {
+            switch ($this->operator->evaluate($vars)) {
                 case "&" :
                     return $leftHandSide && $rightHandSide;
                 case "|" :

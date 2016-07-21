@@ -107,7 +107,12 @@ class IfStatement implements iExpression
         $this->boolExpression = $boolExpression;
     }
 
-    public function evaluate()
+    /**
+     * @param \contour\parser\VariableMap $vars
+     * @return mixed|null
+     * @throws ExpressionEvaluationException
+     */
+    public function evaluate($vars)
     {
         /**
          * The result of the boolean expression in the If statement
@@ -125,18 +130,22 @@ class IfStatement implements iExpression
          */
         $elseRes = null;
 
-        try{
-            $mainBool = $this->boolExpression->evaluate();
-        } catch (ExpressionEvaluationException $e) {
-            throw new ExpressionEvaluationException($e);
-        }
+        /**
+         * The main boolean that determines the decision of the conditional statement of this if expression.
+         * @var BooleanExpression
+         */
+        $mainBool = $this->boolExpression->evaluate($vars);
 
+        //if the boolean expression is true then do the "then" statement that the if statement contains
         if($mainBool)
-            return $this->thenConstructor->evaluate();
-        else {
+            return $this->thenConstructor->evaluate($vars);
 
+        //otherwise, go through all of the else statements, either until they have all been used or until one
+        //of them does not return null, which means that there was a true "else if" or an overall "else" statement in the else expressions
+        //and so there was a result to be returned/
+        else {
             while($elseInstrCounter < count($this->elseConstructors) && $elseRes == null) {
-                $elseRes = $this->elseConstructors[$elseInstrCounter]->evaluate();
+                $elseRes = $this->elseConstructors[$elseInstrCounter]->evaluate($vars);
                 $elseInstrCounter++;
             }
         }
@@ -144,6 +153,9 @@ class IfStatement implements iExpression
         return $elseRes;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         //the string formed of all of the else statements in the expression.

@@ -37,7 +37,7 @@ class ExprParser
      * @var array
      * Words at the start of lines that determine what type of command is being called.
      */
-    private $linestarts = array("if", "then", "else", "let", "return");
+    private $linestarts = array("if", "then", "else", "let", "return", "params");
 
     /**
      * @var string
@@ -107,6 +107,8 @@ class ExprParser
             case $this->linestarts[4] :
                 $resultObject = $this->parseReturn();
                 break;
+            case $this->linestarts[5] :
+                $resultObject = $this->parseParams();
             default :
                 throw new ExpressionParseException("Parser failed to recognise command keyword - check first word");
         }

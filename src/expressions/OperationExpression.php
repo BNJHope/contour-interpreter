@@ -40,7 +40,11 @@ class OperationExpression implements iExpression
         $this->operation = $operation;
     }
 
-    public function evaluate()
+    /**
+     * @param \contour\parser\VariableMap $vars
+     * @return string
+     */
+    public function evaluate($vars)
     {
         return $this->operation;
     }
