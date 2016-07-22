@@ -1,4 +1,4 @@
-The grammar for declaring basic functions in the boxes in the Evergreen application.
+This is a parser for the Contour project. It parses a basic function syntax for spreadsheets so that operations on tags can be performed.
 
 statement := command || conditional_full
 
