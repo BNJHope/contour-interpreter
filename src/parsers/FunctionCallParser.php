@@ -80,7 +80,6 @@ class FunctionCallParser
          */
         $params = $this->parseCommaSeparatedBrackets();
 
-        
     }
 
     /**

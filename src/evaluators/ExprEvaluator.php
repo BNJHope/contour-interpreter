@@ -2,7 +2,10 @@
 
 namespace contour\parser\evaluators;
 
+use contour\parser\exceptions\ExpressionEvaluationException;
 use contour\parser\expressions\iExpression;
+use contour\parser\expressions\ParamsExpression;
+use contour\parser\VariableMap;
 
 /**
  * Class ExprEvaluator
@@ -17,7 +20,7 @@ class ExprEvaluator {
     private $instrPtr;
 
     public function __construct() {
-        $this->instrPtr = 0;
+        $this->instrPtr = 1;
     }
 
     /**
@@ -27,8 +30,11 @@ class ExprEvaluator {
      * @returns mixed
      * Whatever the result of the function might be.
      */
-    public function evaluate($function) {
-        $this->instrPtr = 0;
+    public function evaluate($function, $vars, $params) {
+        //set the instrPtr to 1, as the first instr should be a params expression for parameters, which will be dealt with
+        //separately beforehand
+        $this->instrPtr = 1;
+
         //while there are still instructions in the function array to be processed
         //or while result is still null
         //set the result as the evaluation of the current function.
@@ -37,8 +43,14 @@ class ExprEvaluator {
 
         $result = null;
 
+        if (!($function[0] instanceof ParamsExpression))
+            throw new ExpressionEvaluationException("No params statement found");
+        else {
+            $this->setParams($function[0], $vars, $params);
+        }
+
         while(!$endOfFunction && $result == null ) {
-            $result = $function[$this->instrPtr]->evaluate();
+            $result = $function[$this->instrPtr]->evaluate($vars);
             $this->instrPtr++;
             if($this->instrPtr >= count($function)) {
                 $endOfFunction = true;
@@ -46,6 +58,20 @@ class ExprEvaluator {
         }
 
         return $result;
+    }
+
+    /**
+     * @param $paramsLine ParamsExpression
+     * @param $vars VariableMap
+     * @param $params
+     */
+    function setParams($paramsLine, $vars, $params) {
+
+        $paramKeys = $paramsLine->evaluate($vars);
+
+        for($i = 0; $i < count($params); $i++) {
+            $vars->setVariable($paramKeys[$i], $params[$i]);
+        }
     }
 
 }
