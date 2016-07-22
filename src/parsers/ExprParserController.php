@@ -90,7 +90,7 @@ class ExprParserController
         $exprToAdd = null;
 
         //while there are still lines to be parsed.
-        while($this->isNext()) {
+        while($this->hasNext()) {
 
             //if there is at least one instruction that has been parsed and it is not an instance of an else expression
             //then there is a possibility that a previous if statement checked to see if it was an else expression, found it
@@ -177,7 +177,7 @@ class ExprParserController
         //set the then clause of the if statement to be returned as the then statement which has been parsed
         $totalIfStatement->setThenConstructor($nextLine);
 
-        if($this->isNext()){
+        if($this->hasNext()){
 
             $exitCondition = false;
 
@@ -206,7 +206,7 @@ class ExprParserController
                 //add the parsed else structure to the total if structure
                 $totalIfStatement->addToElseConstructors($nextLine);
 
-                if($this->isNext()) {
+                if($this->hasNext()) {
                     //set the next line as the next line to be parsed
                     $nextLine = $this->getNextElement();
 
@@ -257,7 +257,7 @@ class ExprParserController
     /**
      * Checks to see if there are still elements to be parsed.
      */
-    private function isNext()
+    private function hasNext()
     {
         //returns true if the instruction pointer has not yet reached the last element of the array of function instructions.
         return (!($this->instructPtr == count($this->linesToParse)));

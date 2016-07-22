@@ -30,7 +30,9 @@ class ParamsExpression implements iExpression
      */
     public function evaluate($vars)
     {
-        // TODO: Implement evaluate() method.
+        for($i = 0; $i < count($this->params); $i++) {
+            $vars->setVariable($this->params[$i], "");
+        }
     }
 
     public function __toString()

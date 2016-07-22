@@ -196,7 +196,7 @@ class ExprParser
 
         //while there are still characters to be parsed
         //or the expression is not yet complete
-        while ($this->isNext() && !$expressionComplete) {
+        while ($this->hasNext() && !$expressionComplete) {
 
             //get the next char in the stream
             $currentChar = $this->getNextChar();
@@ -447,12 +447,12 @@ class ExprParser
          */
         $resString = "";
 
-        if (!$this->isNext()) {
+        if (!$this->hasNext()) {
             throw new ExpressionParseException("Not given anything to return.");
         }
 
         //put the rest of the line as the result container
-        while ($this->isNext()) {
+        while ($this->hasNext()) {
             $resString .= $this->getNextChar();
         }
 
@@ -485,7 +485,7 @@ class ExprParser
         $exprToAdd = "";
 
         //while there is still a character in the line
-        while ($this->isNext()) {
+        while ($this->hasNext()) {
 
             //get the next character in the line
             $currentChar = $this->getNextChar();
@@ -607,7 +607,7 @@ class ExprParser
         }
 
         //get the tag name - the string upto the last brace - but break if it reaches the end of the line.
-        while (!$closeBraceFound && $this->isNext()) {
+        while (!$closeBraceFound && $this->hasNext()) {
             $currentChar = $this->getNextChar();
             switch ($currentChar) {
                 case "," :
@@ -667,7 +667,7 @@ class ExprParser
         if($this->getNextChar() != "(")
             throw new ExpressionParseException("No open brace found for parameter expression");
 
-        while(!$closeBraceFound && $this->isNext()) {
+        while(!$closeBraceFound && $this->hasNext()) {
             $currentChar = $this->getNextChar();
             switch($currentChar) {
                 case "," :
@@ -729,7 +729,7 @@ class ExprParser
      * @return bool
      * Checks if there is still more characters in the expression to be parsed.
      */
-    function isNext()
+    function hasNext()
     {
         return $this->parseIndex < (count($this->exprArray));
     }
