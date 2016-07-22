@@ -69,6 +69,18 @@ class FunctionCallParser
         //split the expression into an array of characters
         $this->exprArray = str_split($this->expr);
 
+        /**
+         * The tags that represent the location of the function to be evaluated in the sheets.
+         * @var string[]
+         */
+        $funcLocation = $this->parseCommaSeparatedBrackets();
+
+        /**
+         * The parameters that will be passed
+         */
+        $params = $this->parseCommaSeparatedBrackets();
+
+        
     }
 
     /**
