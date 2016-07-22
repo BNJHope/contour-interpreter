@@ -9,6 +9,8 @@
 namespace contour\parser\parsers;
 
 
+use contour\parser\exceptions\ExpressionParseException;
+
 class FunctionCallParser
 {
 
@@ -41,32 +43,99 @@ class FunctionCallParser
         $this->stack = new ParseStack();
     }
 
+    /**
+     * The keyword used for declaring a function.
+     * @var string
+     */
+    public static $funcConst = "func";
+
     public function parse($expr) {
-
-        //set this objects expression to the expression passed to the parse function so that all properties and methods
-        //of the object can access the expression.
-        $this->expr = $expr;
-
-        //split the expression into an array of characters
-        $this->exprArray = str_split($this->expr);
 
         //set the parse index to the beginning of the expression
         $this->parseIndex = 0;
 
-        //test to see that the keyword is "func", if it is not then it is not a function being parsed.
-        $keyword = $this->getUptoHashtag();
+        //splits the expression into 2 parts - first part is everything before and not including the hashtag, the second part
+        //is everything after and not including the hashtag.
+        $contents = explode("/", $expr, 2);
+
+        if($contents[0] != self::$funcConst) {
+            throw new ExpressionParseException("func keyword not found before hashtag");
+        }
+
+        //sets the expression to be parsed as the two bracket statements which contain the location of the function
+        //to be evaluated and the parameters to pass to the function
+        $this->expr = $contents[1];
+
+        //split the expression into an array of characters
+        $this->exprArray = str_split($this->expr);
+
+
     }
 
-    public function getUptoHashtag() {
+    function parseCommaSeparatedBrackets() {
 
+        /**
+         * @var string
+         */
+        $currentChar = "";
+
+        /**
+         * @var bool
+         */
+        $closeBracketFound = false;
+
+        /**
+         *
+         */
+        $strToAdd = "";
+
+        /**
+         * @var string[]
+         */
+        $result = array();
+
+        if($this->getNextChar() != "(") {
+            throw new ExpressionParseException("Open bracket not found");
+        }
+
+        while(!$closeBracketFound && $this->hasNext()) {
+
+            $currentChar = $this->getNextChar();
+
+            switch($currentChar) {
+                case "," :
+                    array_push($result, trim($strToAdd));
+                    $strToAdd = "";
+                    break;
+                case ")" :
+                    array_push($result, trim($strToAdd));
+                    $closeBracketFound = true;
+                    break;
+                default :
+                    $strToAdd .= $currentChar;
+            }
+        }
+
+        return $result;
     }
 
-    public function getNextChar(){
-
+    /**
+     * @return string
+     * Gets the next character in the expression.
+     */
+    function getNextChar()
+    {
+        $charToReturn = $this->exprArray[$this->parseIndex];
+        $this->parseIndex++;
+        return $charToReturn;
     }
 
-    public function hasNext(){
-
+    /**
+     * @return bool
+     * Checks if there is still more characters in the expression to be parsed.
+     */
+    function hasNext()
+    {
+        return $this->parseIndex < (count($this->exprArray));
     }
-
 }
