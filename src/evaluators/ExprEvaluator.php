@@ -27,8 +27,11 @@ class ExprEvaluator {
      * Evaluates a group of expressions as one function.
      * @param iExpression[] $function
      * The function that has been parsed as a group of iExpressions.
-     * @returns mixed
+     * @param $vars VariableMap
+     * @param $params mixed[]
+     * @return mixed Whatever the result of the function might be.
      * Whatever the result of the function might be.
+     * @throws ExpressionEvaluationException
      */
     public function evaluate($function, $vars, $params) {
         //set the instrPtr to 1, as the first instr should be a params expression for parameters, which will be dealt with
@@ -46,7 +49,7 @@ class ExprEvaluator {
         if (!($function[0] instanceof ParamsExpression))
             throw new ExpressionEvaluationException("No params statement found");
         else {
-            $this->setParams($function[0], $vars, $params);
+            $vars = $this->setParams($function[0], $vars, $params);
         }
 
         while(!$endOfFunction && $result == null ) {
@@ -64,6 +67,7 @@ class ExprEvaluator {
      * @param $paramsLine ParamsExpression
      * @param $vars VariableMap
      * @param $params
+     * @return VariableMap
      */
     function setParams($paramsLine, $vars, $params) {
 
@@ -72,6 +76,8 @@ class ExprEvaluator {
         for($i = 0; $i < count($params); $i++) {
             $vars->setVariable($paramKeys[$i], $params[$i]);
         }
+
+        return $vars;
     }
 
 }
