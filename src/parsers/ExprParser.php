@@ -58,6 +58,9 @@ class ExprParser
      */
     private $parseIndex;
 
+    private $boolExprs = ["=", ">", "<", "<=", ">="];
+
+    private $arithmeticExprs = ["+", "-", "*", "/"];
     /**
      * Parses a line of the function that is passed to the program.
      * @param $expr
@@ -733,4 +736,105 @@ class ExprParser
     {
         return $this->parseIndex < (count($this->exprArray));
     }
+
+
+    /**
+     * Determines the tree of boolean operations from a line of operations.
+     */
+    function shunt() {
+        $resultStack = new ArithmeticStack();
+
+        $token = null;
+
+        while(!in_array($this->getNextChar(), $this->boolExprs) && $this->hasNext()) {
+
+
+        }
 }
+
+    /**
+     * Determines the precedence of the operation passed to the function.
+     * @param $op
+     * The operation to determine the precedence for.
+     * @return int
+     * The precedence of the given operation, where a larger number constitutes a higher precedence.
+     * @throws ExpressionParseException
+     * If it is an unrecognised operation then this expression is thrown.
+     */
+    function precedence($op) {
+
+        switch ($op) {
+            case '*' :
+            case '/' :
+            case '%' :
+                return 7;
+            case '+' :
+            case '-' :
+                return 6;
+            case '=' :
+            case '<' :
+            case '>' :
+            case '>=' :
+            case '<=' :
+                return 4;
+            case '&' :
+                return 3;
+            case '|' :
+                return 2;
+            default:
+                throw new ExpressionParseException("Invalid Operation : " . $op);
+        }
+
+    }
+
+    function getNextToken() {
+
+        /**
+         * The next expression token to be returned.
+         */
+        $exprToReturn = null;
+
+        $currentChar = $this->getNextChar();
+        switch($currentChar) {
+            case '#' :
+                $exprToReturn = $this->parseTag();
+                break;
+            case '\"' :
+
+        }
+    }
+
+    /**
+     * Gets rest of string when getting a string value as a token in the parser.
+     */
+    function getRestOfString() {
+        /**
+         * The current character in the parser stream.
+         * @var string
+         */
+        $currentChar = "";
+
+        /**
+         * The result string to be returned.
+         * @var string
+         */
+        $result = "";
+
+        /**
+         * Add characters to the result string upto and including the next occurrence of quotation marks.
+         */
+        while($this->hasNext() && $currentChar != "\"") {
+            $currentChar = $this->getNextChar();
+            $result .= $currentChar;
+        }
+
+        /**
+         * If the parser made it to the end of the line without completing the string parse then throw a parse exception.
+         */
+        if(!$this->hasNext() && mb_substr($result, -1) != "\"")
+            throw new ExpressionParseException("String expression did not contain terminating speech marks.");
+
+        return $result;
+    }
+}
+
