@@ -737,19 +737,98 @@ class ExprParser
         return $this->parseIndex < (count($this->exprArray));
     }
 
-
     /**
      * Determines the tree of boolean operations from a line of operations.
      */
     function shunt() {
-        $resultStack = new ArithmeticStack();
 
+        /**
+         * The stack that will be used to hold the different values during the process of the algorithm.
+         */
+        $workingStack = [];
+
+        /**
+         * The resulting stack that contains the expressions in correct order.
+         */
+        $output = [];
+
+        /**
+         * The token object that is being checked in the shunting process.
+         */
         $token = null;
 
-        while(!in_array($this->getNextChar(), $this->boolExprs) && $this->hasNext()) {
+        /**
+         * Determines if a close bracket term has been found.
+         */
+        $closeBracketFound = false;
 
+        /**
+         * Determines if the inner loop which determines the order of operators in the output
+         * needs to end or not depending on the precedences of the operators.
+         */
+        $innerLoopEnd = false;
 
+        /**
+         * While there are still tokens in the stream...
+         */
+        while($this->hasNext() && !$closeBracketFound) {
+
+            /**
+             * Get the next token.
+             */
+            $token = $this->getNextToken();
+
+            /**
+             * If the token is a close bracket then exit the loop
+             */
+            if ($token == ")")
+                $closeBracketFound = true;
+
+            /**
+             * If it is a raw value of some description then push it onto the stack to be returned.
+             */
+            else if ($token instanceof RawValueExpression)
+                array_push($output, $token);
+
+            /**
+             * If it is an operator then check the order of the stack.
+             */
+            else if ($token instanceof OperationExpression) {
+
+                /**
+                 * While the working stack is not empty...
+                 */
+                while(!empty($workingStack) && !$innerLoopEnd) {
+
+                    /**
+                     * Get the operator held at the top of the working stack.
+                     * @var OperationExpression
+                     */
+                    $top = array_pop($workingStack);
+
+                    if($this->precedence($top->getValue()) >= $this->precedence($token->getValue()))
+                        array_push($output, $top);
+                    else {
+                        array_push($workingStack, $top);
+                        $innerLoopEnd = true;
+                    }
+                }
+
+                array_push($workingStack, $token);
+                $innerLoopEnd = false;
+            }
+
+            else if ($token == "(")
+                $output = array_merge($output, $this->shunt());
         }
+
+        /**
+         * while the working stack is still not empty, push all remaining operators onto the end of the result.
+         */
+        while(!empty($workingStack))
+            array_push($output, array_pop($workingStack));
+
+        return $output;
 }
 
     /**
@@ -787,21 +866,94 @@ class ExprParser
 
     }
 
+    /**
+     * Gets the next whole token for the shunting process.
+     * @return OperationExpression|RawValueExpression|TagExpression|null|string
+     */
     function getNextToken() {
-
         /**
          * The next expression token to be returned.
          */
         $exprToReturn = null;
 
         $currentChar = $this->getNextChar();
-        switch($currentChar) {
-            case '#' :
+
+        /**
+         * Ignores any whitespace left at the beginning of the line
+         */
+        while($currentChar = " ")
+            $currentChar = $this->getNextChar();
+
+        switch(true) {
+            case $currentChar == '#' :
                 $exprToReturn = $this->parseTag();
                 break;
-            case '\"' :
+            case $currentChar == '\"' :
+                $exprToReturn = new RawValueExpression("\"" . $this->getRestOfString());
+                break;
+            case in_array($currentChar, $this->boolExprs) || in_array($currentChar, $this->arithmeticExprs) :
+                /**
+                 * Check to see if the next character in the string is a part of the operation.
+                 */
+                $extraChar = $this->getNextChar();
 
+                /**
+                 * If the operation involves multiple characters then
+                 * append the extra character to the operator string representation.
+                 */
+                if($extraChar == "=")
+                    $currentChar .= "=";
+                else
+                    $this->moveBackPointer();
+
+                $exprToReturn = new OperationExpression($currentChar);
+                break;
+            case $currentChar == "(":
+                $exprToReturn = "(";
+                break;
+            case $currentChar == ")" :
+                $exprToReturn = ")";
+                break;
+            default :
+                $exprToReturn = new RawValueExpression($currentChar . $this->getRestOfRawValue());
+                break;
         }
+
+        return $exprToReturn;
+    }
+
+    /**
+     * Moves back the parse pointer.
+     */
+    function moveBackPointer() {
+        $this->parseIndex--;
+    }
+
+    /**
+     * Gets the remainder of a raw value.
+     */
+    function getRestOfRawValue(){
+        /**
+         * The current character in the parser stream.
+         * @var string
+         */
+        $currentChar = "";
+
+        /**
+         * The result string to be returned.
+         * @var string
+         */
+        $result = "";
+
+        /**
+         * Add characters to the result string upto and including the next occurrence of quotation marks.
+         */
+        while($this->hasNext() && ctype_alnum($currentChar)) {
+            $currentChar = $this->getNextChar();
+            $result .= $currentChar;
+        }
+
+        return $result;
     }
 
     /**

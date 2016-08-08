@@ -8,6 +8,8 @@
 
 namespace contour\parser\parsers;
 
+use contour\parser\expressions\OperationExpression;
+
 class ArithmeticStack {
 
     private $boolExprs = ["=", ">", "<", "<=", ">="];
@@ -68,7 +70,7 @@ class ArithmeticStack {
     }
 
     function isOperator($expr) {
-        return in_array($expr, $this->arithmeticExprs) || in_array($expr, $this->boolExprs);
+        return ($expr instanceof OperationExpression);
     }
 
 
