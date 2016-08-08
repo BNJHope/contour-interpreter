@@ -21,7 +21,27 @@ class ArithmeticExpression implements iExpression {
    */
   private $secondExpr;
 
+/**
+ * Evaluates the arithmetic expression and returns it.
+ * @return iExpression The result of the two images.
+ */
   public function evaluate(){
+
+    /**
+     * The arithmetic result to be returned from evaluating this arithmetic expression.
+     * @var int
+     */
+    $result = new RawValueExpression();
+
+    switch ($this->operator->evaluate()) {
+      case 'value':
+        # code...
+        break;
+
+      default:
+        # code...
+        break;
+    }
 
   }
 
