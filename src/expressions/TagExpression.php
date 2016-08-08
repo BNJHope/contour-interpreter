@@ -32,7 +32,11 @@ class TagExpression implements iExpression
         $this->tags = $tags;
     }
 
-    public function evaluate()
+    /**
+     * @param \contour\parser\VariableMap $vars
+     * @return mixed|void
+     */
+    public function evaluate($vars)
     {
         // TODO: Implement evaluate() method.
     }

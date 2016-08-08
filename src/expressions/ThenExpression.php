@@ -38,9 +38,13 @@ class ThenExpression implements iExpression
         $this->subExpression = $subExpression;
     }
 
-    public function evaluate()
+    /**
+     * @param \contour\parser\VariableMap $vars
+     * @return mixed
+     */
+    public function evaluate($vars)
     {
-        return $this->subExpression->evaluate();
+        return $this->subExpression->evaluate($vars);
     }
 
     public function __toString()

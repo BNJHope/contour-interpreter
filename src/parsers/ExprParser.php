@@ -7,6 +7,7 @@ use contour\parser\exceptions\ExpressionParseException;
 use contour\parser\expressions\ElseExpression;
 use contour\parser\expressions\iExpression;
 use contour\parser\expressions\OperationExpression;
+use contour\parser\expressions\ParamsExpression;
 use contour\parser\expressions\RawValueExpression;
 use contour\parser\expressions\ResultObject;
 use contour\parser\expressions\TagExpression;
@@ -37,7 +38,7 @@ class ExprParser
      * @var array
      * Words at the start of lines that determine what type of command is being called.
      */
-    private $linestarts = array("if", "then", "else", "let", "return");
+    private $linestarts = array("if", "then", "else", "let", "return", "params");
 
     /**
      * @var string
@@ -106,6 +107,9 @@ class ExprParser
                 break;
             case $this->linestarts[4] :
                 $resultObject = $this->parseReturn();
+                break;
+            case $this->linestarts[5] :
+                $resultObject = $this->parseParams();
                 break;
             default :
                 throw new ExpressionParseException("Parser failed to recognise command keyword - check first word");
@@ -192,7 +196,7 @@ class ExprParser
 
         //while there are still characters to be parsed
         //or the expression is not yet complete
-        while ($this->isNext() && !$expressionComplete) {
+        while ($this->hasNext() && !$expressionComplete) {
 
             //get the next char in the stream
             $currentChar = $this->getNextChar();
@@ -443,12 +447,12 @@ class ExprParser
          */
         $resString = "";
 
-        if (!$this->isNext()) {
+        if (!$this->hasNext()) {
             throw new ExpressionParseException("Not given anything to return.");
         }
 
         //put the rest of the line as the result container
-        while ($this->isNext()) {
+        while ($this->hasNext()) {
             $resString .= $this->getNextChar();
         }
 
@@ -481,7 +485,7 @@ class ExprParser
         $exprToAdd = "";
 
         //while there is still a character in the line
-        while ($this->isNext()) {
+        while ($this->hasNext()) {
 
             //get the next character in the line
             $currentChar = $this->getNextChar();
@@ -603,18 +607,16 @@ class ExprParser
         }
 
         //get the tag name - the string upto the last brace - but break if it reaches the end of the line.
-        while (!$closeBraceFound && $this->isNext()) {
+        while (!$closeBraceFound && $this->hasNext()) {
             $currentChar = $this->getNextChar();
             switch ($currentChar) {
                 case "," :
-                    $tagName = trim($tagName);
-                    array_push($tags, $tagName);
+                    array_push($tags, trim($tagName));
                     $tagName = "";
                     break;
 
                 case ")" :
-                    $tagName = trim($tagName);
-                    array_push($tags, $tagName);
+                    array_push($tags, trim($tagName));
                     $closeBraceFound = true;
                     break;
 
@@ -632,6 +634,59 @@ class ExprParser
         $result->setTags($tags);
 
         return $result;
+    }
+
+    /**
+     * Parses the parameters statement for the function to use.
+     * @return ParamsExpression
+     * @throws ExpressionParseException
+     */
+    function parseParams(){
+
+        /**
+         * An array of the parameters to be used in the function.
+         */
+        $params = array();
+
+        /**
+         * The current character that the parser index is pointing to in the instruction.
+         */
+        $currentChar = "";
+
+        /**
+         * Determines whether the parser has found a close brace yet or not.
+         * @var bool
+         */
+        $closeBraceFound = false;
+
+        /**
+         * The name of the current paramter being read in by the parser.
+         */
+        $paramName = "";
+
+        if($this->getNextChar() != "(")
+            throw new ExpressionParseException("No open brace found for parameter expression");
+
+        while(!$closeBraceFound && $this->hasNext()) {
+            $currentChar = $this->getNextChar();
+            switch($currentChar) {
+                case "," :
+                    array_push($params, trim($paramName));
+                    $paramName = "";
+                    break;
+                case ")" :
+                    array_push($params, trim($paramName));
+                    $closeBraceFound = true;
+                    break;
+                default :
+                    $paramName .= $currentChar;
+            }
+        }
+
+        if(!$closeBraceFound)
+            throw new ExpressionParseException("Failed to find close brace on paramaters declaration.");
+
+        return new ParamsExpression($params);
     }
 
     /**
@@ -674,7 +729,7 @@ class ExprParser
      * @return bool
      * Checks if there is still more characters in the expression to be parsed.
      */
-    function isNext()
+    function hasNext()
     {
         return $this->parseIndex < (count($this->exprArray));
     }

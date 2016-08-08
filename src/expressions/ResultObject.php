@@ -22,10 +22,14 @@ class ResultObject implements iExpression
         return $instance;
     }
 
-    public function evaluate()
+    /**
+     * @param \contour\parser\VariableMap $vars
+     * @return mixed
+     */
+    public function evaluate($vars)
     {
 
-        return $this->result->evaluate();;
+        return $this->result->evaluate($vars);
     }
 
     public function __toString()

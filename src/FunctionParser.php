@@ -29,7 +29,7 @@ class FunctionParser
      * The function to be resolved.
      * @return mixed|string
      */
-    public function resolve($functionString) {
+    public function resolve($functionString, $params) {
         $functionExprs = array();
 
         try {
@@ -39,7 +39,7 @@ class FunctionParser
         }
 
         try {
-            $result = $this->evaluator->evaluate($functionExprs);
+            //TODO : fix line $result = $this->evaluator->evaluate($functionExprs, new VariableMap(), );
         } catch (ExpressionEvaluationException $e) {
             return $e->getMessage();
         }

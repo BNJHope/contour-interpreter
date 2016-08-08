@@ -44,8 +44,11 @@ class RawValueExpression implements iExpression
 
     /**
      * Determines the type of the raw value and returns it.
+     * @param $vars VariableMap
+     * @return bool|mixed
+     * @throws ExpressionEvaluationException
      */
-    public function evaluate()
+    public function evaluate($vars)
     {
         switch(true) {
             case (substr($this->value, -1) == "\"") && (substr($this->value, 0, 1) == "\"") :
@@ -65,7 +68,7 @@ class RawValueExpression implements iExpression
             //otherwise check to see if it is a variable name
             default :
                 try {
-                    return VariableMap::getVariable($this->value);
+                    return $vars->getVariable($this->value);
                 } catch (ExpressionEvaluationException $e) {
                     throw new ExpressionEvaluationException($e);
                 }
