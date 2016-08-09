@@ -60,7 +60,7 @@ class ExprParser
 
     private $boolExprs = ["=", ">", "<", "<=", ">="];
 
-    private $arithmeticExprs = ["+", "-", "*", "/"];
+    private $arithmeticExprs = ["+", "-", "*", "/", "&", "|"];
     /**
      * Parses a line of the function that is passed to the program.
      * @param $expr
@@ -72,15 +72,8 @@ class ExprParser
      */
     function parse($expr)
     {
-
-        //set the objects expression property to the expression passed to the
-        $this->expr = $expr;
-
-        //Set the objects expression array to the exploded expression string.
-        $this->exprArray = str_split($this->expr);
-
-        //Set the parse index of the object back to the start.
-        $this->parseIndex = 0;
+        //initialise the parser
+        $this->setUpParser($expr);
 
         /**
          * @var object
@@ -806,7 +799,7 @@ class ExprParser
                      */
                     $top = array_pop($workingStack);
 
-                    if($this->precedence($top->getValue()) >= $this->precedence($token->getValue()))
+                    if($this->precedence($top->getOperation()) >= $this->precedence($token->getOperation()))
                         array_push($output, $top);
                     else {
                         array_push($workingStack, $top);
@@ -876,19 +869,22 @@ class ExprParser
          */
         $exprToReturn = null;
 
+        /**
+         * The next character in the stream.
+         */
         $currentChar = $this->getNextChar();
 
         /**
          * Ignores any whitespace left at the beginning of the line
          */
-        while($currentChar = " ")
+        while($currentChar == " " && $this->hasNext())
             $currentChar = $this->getNextChar();
 
         switch(true) {
-            case $currentChar == '#' :
+            case $currentChar == "#" :
                 $exprToReturn = $this->parseTag();
                 break;
-            case $currentChar == '\"' :
+            case $currentChar == "\"" :
                 $exprToReturn = new RawValueExpression("\"" . $this->getRestOfString());
                 break;
             case in_array($currentChar, $this->boolExprs) || in_array($currentChar, $this->arithmeticExprs) :
@@ -946,11 +942,20 @@ class ExprParser
         $result = "";
 
         /**
-         * Add characters to the result string upto and including the next occurrence of quotation marks.
+         * Determines whether a non alphanumeric character has been found yet.
          */
-        while($this->hasNext() && ctype_alnum($currentChar)) {
+        $nonAlphaNumericCharacterFound = false;
+
+        /**
+         * Add characters to the result string upto and including the next occurrence of a non alphanumeric character.
+         */
+        while($this->hasNext() && !$nonAlphaNumericCharacterFound) {
             $currentChar = $this->getNextChar();
-            $result .= $currentChar;
+            $nonAlphaNumericCharacterFound = !ctype_alnum($currentChar);
+            if($nonAlphaNumericCharacterFound)
+                $this->moveBackPointer();
+            else
+                $result .= $currentChar;
         }
 
         return $result;
@@ -986,6 +991,33 @@ class ExprParser
         if(!$this->hasNext() && mb_substr($result, -1) != "\"")
             throw new ExpressionParseException("String expression did not contain terminating speech marks.");
 
+        return $result;
+    }
+
+    /**
+     * Initialises the parser with the given expression by setting the expression properties
+     * and restarting the parse index
+     * @param $exprToSetUp
+     */
+    function setUpParser($exprToSetUp) {
+        //set the objects expression property to the expression passed to the
+        $this->expr = $exprToSetUp;
+
+        //Set the objects expression array to the exploded expression string.
+        $this->exprArray = str_split($this->expr);
+
+        //Set the parse index of the object back to the start.
+        $this->parseIndex = 0;
+    }
+
+    /**
+     * A function wrapper that tests solely the shunt function without needing to do an entire parsing process.
+     * @param $expression
+     * @return array
+     */
+    function testShunt($expression) {
+        $this->setUpParser($expression);
+        $result = $this->shunt();
         return $result;
     }
 }
