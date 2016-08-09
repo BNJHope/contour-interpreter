@@ -11,6 +11,7 @@ namespace contour\parser\tests;
 
 use contour\parser\expressions\OperationExpression;
 use contour\parser\expressions\RawValueExpression;
+use contour\parser\expressions\TagExpression;
 use contour\parser\parsers\ExprParser;
 use PHPUnit_Framework_TestCase;
 
@@ -62,5 +63,10 @@ class ShuntingParserTest extends PHPUnit_Framework_TestCase
         $result = [new RawValueExpression(3), new RawValueExpression(4), new RawValueExpression(5), new OperationExpression("&"), new OperationExpression("*"), new RawValueExpression("\"klsefs\""), new RawValueExpression("test"), new RawValueExpression(2), new OperationExpression("|"), new OperationExpression("/"), new OperationExpression("+")];
         $this->assertEquals($result, self::$parser->testShunt($test));
     }
-    
+
+    public function testTag() {
+        $test = "#(test1, test2) + 3";
+        $result = [TagExpression::withValues(["test1", "test2"]), new RawValueExpression(3), new OperationExpression("+")];
+        $this->assertEquals($result, self::$parser->testShunt($test));
+    }
 }

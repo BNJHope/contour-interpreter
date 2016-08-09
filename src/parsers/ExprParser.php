@@ -780,7 +780,7 @@ class ExprParser
             /**
              * If it is a raw value of some description then push it onto the stack to be returned.
              */
-            else if ($token instanceof RawValueExpression)
+            else if (($token instanceof RawValueExpression) || ($token instanceof TagExpression))
                 array_push($output, $token);
 
             /**
@@ -883,6 +883,7 @@ class ExprParser
         switch(true) {
             case $currentChar == "#" :
                 $exprToReturn = $this->parseTag();
+                $string = "";
                 break;
             case $currentChar == "\"" :
                 $exprToReturn = new RawValueExpression("\"" . $this->getRestOfString());
