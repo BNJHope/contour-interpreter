@@ -15,9 +15,7 @@ use contour\parser\expressions\RawValueExpression;
 
 class ArithmeticStack {
 
-    private $boolExprs = ["=", ">", "<", "<=", ">="];
-
-    private $arithmeticExprs = ["+", "-", "*", "/"];
+    private $boolExprs = ["=", ">", "<", "<=", ">=", "+", "-", "*", "/", "%", "&", "|"];
 
     private $stack = [];
 
@@ -41,14 +39,11 @@ class ArithmeticStack {
     }
 
     function evaluate() {
+
         $totalExpr = new BooleanExpression();
-
         $current = $this->pop();
-
         $totalExpr->setOperator(new OperationExpression($current));
-
         $exprToAdd = null;
-
         $current = $this->top();
 
         if ($this->isOperator($current)) {

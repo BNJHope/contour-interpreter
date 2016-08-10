@@ -60,7 +60,7 @@ class ExprParser
 
     private $boolExprs = ["=", ">", "<", "<=", ">="];
 
-    private $arithmeticExprs = ["+", "-", "*", "/", "&", "|"];
+    private $arithmeticExprs = ["+", "-", "*", "/", "%", "&", "|"];
     /**
      * Parses a line of the function that is passed to the program.
      * @param $expr
