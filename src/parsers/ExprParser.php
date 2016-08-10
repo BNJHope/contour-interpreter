@@ -835,24 +835,70 @@ class ExprParser
      */
     function precedence($op) {
 
+        /**
+         * Switch case depending on the operation.
+         */
         switch ($op) {
+            /**
+             * Multiply
+             */
             case '*' :
+            /**
+             * Divide
+             */
             case '/' :
+            /**
+             * Modulo
+             */
             case '%' :
                 return 7;
+
+            /**
+             * Addition
+             */
             case '+' :
+            /**
+             * Subtraction
+             */
             case '-' :
                 return 6;
+
+            /**
+             * Boolean Equals
+             */
             case '=' :
+            /**
+             * Less than
+             */
             case '<' :
+            /**
+             * Greater than
+             */
             case '>' :
+            /**
+             * Greater than or equal to
+             */
             case '>=' :
+            /**
+             * Less than or equal to
+             */
             case '<=' :
                 return 4;
+
+            /**
+             * Boolean and
+             */
             case '&' :
                 return 3;
+            /**
+             * Boolean Or
+             */
             case '|' :
                 return 2;
+
+            /**
+             * If the operation doesn't fit any of the above then throw an exception.
+             */
             default:
                 throw new ExpressionParseException("Invalid Operation : " . $op);
         }
