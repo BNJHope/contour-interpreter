@@ -730,6 +730,15 @@ class ExprParser
         return $this->parseIndex < (count($this->exprArray));
     }
 
+    function getExpressionTree() {
+        /**
+         * The array of expressions in order of postfix to be evaluated.
+         */
+        $resultArray = $this->shunt();
+
+
+    }
+
     /**
      * Determines the tree of boolean operations from a line of operations.
      */
@@ -886,7 +895,7 @@ class ExprParser
                 return 4;
 
             /**
-             * Boolean and
+             * Boolean And
              */
             case '&' :
                 return 3;
@@ -929,7 +938,6 @@ class ExprParser
         switch(true) {
             case $currentChar == "#" :
                 $exprToReturn = $this->parseTag();
-                $string = "";
                 break;
             case $currentChar == "\"" :
                 $exprToReturn = new RawValueExpression("\"" . $this->getRestOfString());

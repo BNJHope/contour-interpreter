@@ -92,7 +92,8 @@ class BooleanExpression implements iExpression {
     /**
      * Evaluates the boolean expression
      * @param \contour\parser\VariableMap $vars
-     * @return bool The result from evaluating the boolean expression.
+     * @return bool | integer | float
+     * The result from evaluating the boolean expression.
      * The result from evaluating the boolean expression.
      * @throws ExpressionEvaluationException If there is an evaluation error then throw this over to the calling method.
      */
@@ -100,7 +101,6 @@ class BooleanExpression implements iExpression {
 
         //try and get the first side of the expression
         $leftHandSide = $this->firstExpr->evaluate($vars);
-        $string = "";
 
         //if there is only a left hand side expression
         if($this->operator == null) {
@@ -129,6 +129,16 @@ class BooleanExpression implements iExpression {
                     return $leftHandSide && $rightHandSide;
                 case "or" :
                     return $leftHandSide || $rightHandSide;
+                case "+" :
+                    return $leftHandSide + $rightHandSide;
+                case "-" :
+                    return $leftHandSide - $rightHandSide;
+                case "*" :
+                    return $leftHandSide * $rightHandSide;
+                case "/" :
+                    return $leftHandSide / $rightHandSide;
+                case "%" :
+                    return $leftHandSide % $rightHandSide;
                 default :
                     throw new ExpressionEvaluationException("Invalid operator " . $this->operator . " between " . $this->firstExpr . " and " . $this->secondExpr);
             }

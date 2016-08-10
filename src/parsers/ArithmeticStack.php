@@ -8,7 +8,10 @@
 
 namespace contour\parser\parsers;
 
+use contour\parser\exceptions\ExpressionParseException;
+use contour\parser\expressions\BooleanExpression;
 use contour\parser\expressions\OperationExpression;
+use contour\parser\expressions\RawValueExpression;
 
 class ArithmeticStack {
 
@@ -31,14 +34,14 @@ class ArithmeticStack {
     }
 
     function top() {
-        if($this->stack)
-            return $this->stack(count($this->stack) - 1);
+        if($this->isEmpty())
+            return $this->stack[count($this->stack) - 1];
         else
             throw new ExpressionParseException("Invalid Assignments");
     }
 
     function evaluate() {
-        $totalExpr = new ArithmeticExpression();
+        $totalExpr = new BooleanExpression();
 
         $current = $this->pop();
 
