@@ -97,9 +97,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
      * Tests if "if (7 = 8)" returns as expected
      */
     public function testIfValidBracket1Int() {
-        $subobj = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="), new RawValueExpression("8"));
-        $objToTest = BooleanExpression::withValues($subobj);
-
+        $objToTest = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="), new RawValueExpression("8"));
         $this->assertEquals($objToTest, self::$parser->parse(self::$ifValidBracket1Int));
     }
 
@@ -107,10 +105,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
      * Tests if "if (7) = (8)" returns as expected
      */
     public function testIfValidBracket2Int() {
-        $subobj1 = BooleanExpression::withValues(new RawValueExpression("7"));
-        $subobj2 = BooleanExpression::withValues(new RawValueExpression("8"));
 
-        $objToTest = BooleanExpression::withValues($subobj1, new OperationExpression("="), $subobj2);
+        $objToTest = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="), new RawValueExpression("8"));
 
         $this->assertEquals($objToTest, self::$parser->parse(self::$ifValidBracket2Int));
     }
