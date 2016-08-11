@@ -730,13 +730,22 @@ class ExprParser
         return $this->parseIndex < (count($this->exprArray));
     }
 
+    /**
+     * Parses a string of arithmetic and boolean operations and determines their result.
+     * @return BooleanExpression
+     */
     function getExpressionTree() {
         /**
-         * The array of expressions in order of postfix to be evaluated.
+         * The tree constructor for the following expression.
          */
-        $resultArray = $this->shunt();
+        $treeConstructor = new ExpressionTreeConstructor($this->shunt());
 
+        /**
+         * The tree formed from the tree constructor out of the expression parsed
+         */
+        $expressionToReturn = $treeConstructor->convertArrayToTree();
 
+        return $expressionToReturn;
     }
 
     /**
@@ -1073,6 +1082,17 @@ class ExprParser
     function testShunt($expression) {
         $this->setUpParser($expression);
         $result = $this->shunt();
+        return $result;
+    }
+
+    /**
+     * A function wrapper that tests the shunt and tree function without needing to do an entire parsing process.
+     * @param $expression
+     * @return BooleanExpression
+     */
+    function testShuntTree($expression) {
+        $this->setUpParser($expression);
+        $result = $this->getExpressionTree();
         return $result;
     }
 }

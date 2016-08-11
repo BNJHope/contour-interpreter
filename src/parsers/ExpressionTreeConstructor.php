@@ -12,14 +12,22 @@ use contour\parser\exceptions\ExpressionParseException;
 use contour\parser\expressions\BooleanExpression;
 use contour\parser\expressions\iExpression;
 use contour\parser\expressions\OperationExpression;
-use contour\parser\expressions\RawValueExpression;
 
-class ArithmeticStack {
+class ExpressionTreeConstructor {
 
     /**
      * @var iExpression[]
      */
     private $stack;
+
+    /**
+     * ExpressionTreeConstructor constructor.
+     * @param \contour\parser\expressions\iExpression[] $stack
+     */
+    public function __construct(array $stack)
+    {
+        $this->stack = $stack;
+    }
 
     /**
      * Performs a stack pop operation on the array of expressions.
@@ -29,10 +37,10 @@ class ArithmeticStack {
      * This exception is thrown if the stack is empty.
      */
     function pop() {
-        if($this->isEmpty())
-            return array_pop($stack);
+        if(!$this->isEmpty())
+            return array_pop($this->stack);
         else
-            throw new ExpressionParseException("Invalid Assignments");
+            throw new ExpressionParseException("Stack empty");
     }
 
     /**
@@ -52,7 +60,7 @@ class ArithmeticStack {
      * This exception is thrown if the stack is empty.
      */
     function top() {
-        if($this->isEmpty())
+        if(!$this->isEmpty())
             return $this->stack[count($this->stack) - 1];
         else
             throw new ExpressionParseException("Invalid Assignments");
@@ -136,6 +144,7 @@ class ArithmeticStack {
          */
         if($this->isOperator($current)) {
             $exprToAdd = $this->convertArrayToTree();
+
         /**
          * Otherwise, add the single expression to the tree.
          */
