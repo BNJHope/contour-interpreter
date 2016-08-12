@@ -37,13 +37,13 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
 
     public function testNormal() {
         $structToTest = self::$parser->parse("params (x, y)
-        let a = 2
-        if a + x = 4
+        let a = x * (2 + 2)
+        if a=y
         then return 1
         else if a + x = 3
         then return 0");
 
-        $result = self::$evaluator->evaluate($structToTest, new VariableMap(), [2,4]);
+        $result = self::$evaluator->evaluate($structToTest, new VariableMap(), [2,8]);
 
         $this->assertEquals(1,$result);
     }
