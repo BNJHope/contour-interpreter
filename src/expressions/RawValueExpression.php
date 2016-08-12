@@ -55,7 +55,7 @@ class RawValueExpression implements iExpression
                 return $this->value;
             //if it scans correctly as an integer
             case (is_numeric($this->value)) :
-                return intval($this->value);
+                return floatval($this->value);
 
             //if the value is true
             case($this->value == "true") :

@@ -179,7 +179,6 @@ class ExprParser
      */
     function parseIf()
     {
-
         /**
          * The result to be returned from parsing the expression.
          */
@@ -314,84 +313,14 @@ class ExprParser
      */
     function parseVariable()
     {
-
         /**
          * Result to be returned from the function.
          */
         $result = new VariableDeclarationExpression();
 
-        /**
-         * The expression that will be added to the parse tree
-         */
-        $exprToAdd = "";
+        $result->setIdentifier($this->parseIdentifier());
 
-        //while there is still a character in the line
-        while ($this->hasNext()) {
-
-            //get the next character in the line
-            $currentChar = $this->getNextChar();
-
-            switch ($currentChar) {
-
-                case " " :
-                    //set the expression to add back to empty again
-                    $exprToAdd = "";
-
-                    //empty the stack contents into expression to add
-                    while (!$this->stack->isEmpty()) {
-                        $exprToAdd = $this->stack->pop() . $exprToAdd;
-                    }
-
-                    //if there is no variable identifier in the variable declaration expression
-                    //then the expression to add must be that identifier
-                    if ($result->getIdentifier() == null)
-                        $result->setIdentifier(new RawValueExpression($exprToAdd));
-
-                    //if it is the equals symbol then ignore it
-                    elseif ($exprToAdd == "=") {
-                    }
-
-                    //if it has been determined that the identifier is not empty
-                    //and that the expression to add is not the equals sign
-                    //then it must be the value of the variable
-                    elseif ($result->getValue() == null) {
-                        $result->setValue(new RawValueExpression($exprToAdd));
-
-                        //the set is complete - break from the parsing
-                        break;
-                    } //if there are parsing issues, throw an exception
-                    else throw new ExpressionParseException("Error when declaring variable");
-
-                    break;
-
-                //if its a tag store the result as a tag
-                case "#" :
-                    //make the expression to add the parsed reference tag
-                    //if there are problems parsing, then throw that exception.
-                    $exprToAdd = $this->parseTag();
-
-                    //if the first expression is null then that means that the tag should take the place
-                    //of the first expression
-                    if ($result->getIdentifier() == null) {
-                        throw new ExpressionParseException("Cannot declare variable as tag");
-
-                        //if the operator is null but the first expression is full then that means that the tag is
-                        //in the place of the operator of the expression, which is illegal.
-                    } else if ($result->getValue() == null) {
-                        $result->setValue($exprToAdd);
-
-                        //any other problems parsing then throw an exception
-                    } else {
-                        throw new ExpressionParseException("Error parsing variable declaration expression.");
-                    }
-
-                    break;
-
-                //if it isn't a space character or a tag, push it onto the stack
-                default :
-                    $this->stack->push($currentChar);
-            }
-        }
+        $result->setValue($this->getExpressionTree());
 
         //if there is an identifier but no value then set the value as the leftover string
         if ($result->getIdentifier() != null && $result->getValue() == null) {
@@ -414,9 +343,23 @@ class ExprParser
             throw new ExpressionParseException("Invalid variable declaration.");
         }
 
-
         //return the resulting structure
         return $result;
+    }
+
+    function parseIdentifier(){
+
+        $currentChar = "";
+        $identifier = "";
+
+        while($this->hasNext() && $currentChar != "="){
+            $currentChar = $this->getNextChar();
+            if($currentChar != "=") {
+                $identifier .= $currentChar;
+            }
+        }
+
+        return trim($identifier);
     }
 
     function parseTag()

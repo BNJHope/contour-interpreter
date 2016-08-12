@@ -34,6 +34,8 @@ class ParamsExpression implements iExpression
         for($i = 0; $i < count($this->params); $i++) {
             array_push($result,$this->params[$i]);
         }
+
+        return $result;
     }
 
     public function __toString()

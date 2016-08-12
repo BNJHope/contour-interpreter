@@ -11,12 +11,12 @@ use contour\parser\VariableMap;
 class VariableDeclarationExpression implements iExpression {
 
     /**
-     * @var RawValueExpression
+     * @var string
      */
     private $identifier;
 
     /**
-     * @var RawValueExpression
+     * @var iExpression
      */
     private $value;
 
@@ -69,7 +69,7 @@ class VariableDeclarationExpression implements iExpression {
      * @return mixed|void
      */
     public function evaluate($vars){
-        $vars->setVariable($this->identifier->getValue(), $this->value->getValue());
+        $vars->setVariable($this->getIdentifier(), $this->value->evaluate($vars));
     }
 
     /**

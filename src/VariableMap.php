@@ -26,6 +26,7 @@ class VariableMap
      * If there is not a value stored at the given key then this exception is thrown.
      */
     public function getVariable($key) {
+
         if(array_key_exists($key, $this->variables))
             return $this->variables[$key];
         else

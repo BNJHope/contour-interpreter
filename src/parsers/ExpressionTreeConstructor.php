@@ -12,6 +12,7 @@ use contour\parser\exceptions\ExpressionParseException;
 use contour\parser\expressions\BooleanExpression;
 use contour\parser\expressions\iExpression;
 use contour\parser\expressions\OperationExpression;
+use contour\parser\expressions\RawValueExpression;
 
 class ExpressionTreeConstructor {
 
@@ -72,10 +73,7 @@ class ExpressionTreeConstructor {
      */
     function convertArrayToTree() {
 
-        /**
-         * The overall expression to be formed and returned for evaluation.
-         */
-        $totalExpr = new BooleanExpression();
+
 
         /**
          * The expression at the top of the stack.
@@ -86,13 +84,20 @@ class ExpressionTreeConstructor {
          * If the stack has only one value and it is not an operation then return that value.
          */
         if(!$this->isOperator($current)){
-            $totalExpr->setFirstExpr($current);
+
+            $totalExpr = $current;
+
         /**
          * If there are more than one expressions in the stack and the first one is an operation
          * then set the next expression in the tree to that operation and recursively get the other values
          * for the tree.
          */
         } else {
+
+            /**
+             * The overall expression to be formed and returned for evaluation.
+             */
+            $totalExpr = new BooleanExpression();
 
             /**
              * Set the operator of the total expression to the operation

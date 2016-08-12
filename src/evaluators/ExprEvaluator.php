@@ -5,6 +5,7 @@ namespace contour\parser\evaluators;
 use contour\parser\exceptions\ExpressionEvaluationException;
 use contour\parser\expressions\iExpression;
 use contour\parser\expressions\ParamsExpression;
+use contour\parser\expressions\RawValueExpression;
 use contour\parser\VariableMap;
 
 /**
@@ -55,6 +56,7 @@ class ExprEvaluator {
         while(!$endOfFunction && $result == null ) {
             $result = $function[$this->instrPtr]->evaluate($vars);
             $this->instrPtr++;
+
             if($this->instrPtr >= count($function)) {
                 $endOfFunction = true;
             }
