@@ -1,7 +1,6 @@
 <?php
 
 namespace contour\parser\expressions;
-use contour\parser\expressions\iExpression;
 
 /**
  * Class ThenExpression
@@ -16,7 +15,8 @@ class ThenExpression implements iExpression
      */
     private $subExpression;
 
-    public static function withValue($value) {
+    public static function withValue($value)
+    {
         $instance = new self;
         $instance->setSubExpression($value);
         return $instance;

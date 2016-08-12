@@ -1,11 +1,8 @@
 <?php
 
 namespace contour\parser\expressions;
-use contour\parser\expressions\BooleanExpression;
+
 use contour\parser\exceptions\ExpressionEvaluationException;
-use contour\parser\expressions\ElseExpression;
-use contour\parser\expressions\iExpression;
-use contour\parser\expressions\ThenExpression;
 
 /**
  * Class IfStatement
@@ -14,22 +11,16 @@ use contour\parser\expressions\ThenExpression;
 class IfStatement implements iExpression
 {
 
-    public function __construct() {
-        $this->elseConstructors = array();
-    }
-
     /**
      * @var BooleanExpression
      * The boolean expression that determines whether the if condition is true or false.
      */
     private $boolExpression;
-
     /**
      * @var ThenExpression
      * The instructions that are carried out if the boolean expression is determined true.
      */
     private $thenConstructor;
-
     /**
      * @var ElseExpression[]
      * The instructions that are carried out if the boolean expression is determined false
@@ -37,13 +28,19 @@ class IfStatement implements iExpression
      */
     private $elseConstructors;
 
+    public function __construct()
+    {
+        $this->elseConstructors = array();
+    }
+
     /**
      * Returns an if statement instance with the given boolean expression and then expression
      * @param $bool
      * @param $then
      * @return IfStatement
      */
-    public static function withIfAndThen($bool,  $then) {
+    public static function withIfAndThen($bool, $then)
+    {
         $instance = new self();
         $instance->setBoolExpression($bool);
         $instance->setThenConstructor($then);
@@ -71,7 +68,8 @@ class IfStatement implements iExpression
      * @param $elseConstructor
      * The else constructor to add to the array.
      */
-    public function addToElseConstructors($elseConstructor) {
+    public function addToElseConstructors($elseConstructor)
+    {
         array_push($this->elseConstructors, $elseConstructor);
     }
 
@@ -137,14 +135,14 @@ class IfStatement implements iExpression
         $mainBool = $this->boolExpression->evaluate($vars);
 
         //if the boolean expression is true then do the "then" statement that the if statement contains
-        if($mainBool)
+        if ($mainBool)
             return $this->thenConstructor->evaluate($vars);
 
         //otherwise, go through all of the else statements, either until they have all been used or until one
         //of them does not return null, which means that there was a true "else if" or an overall "else" statement in the else expressions
         //and so there was a result to be returned/
         else {
-            while($elseInstrCounter < count($this->elseConstructors) && $elseRes == null) {
+            while ($elseInstrCounter < count($this->elseConstructors) && $elseRes == null) {
                 $elseRes = $this->elseConstructors[$elseInstrCounter]->evaluate($vars);
                 $elseInstrCounter++;
             }
@@ -162,7 +160,7 @@ class IfStatement implements iExpression
         $elseString = "";
 
         //append all of the else statements as strings to the else string to be printed for this if statement
-        foreach($this->elseConstructors as $elseStat) {
+        foreach ($this->elseConstructors as $elseStat) {
             $elseString = $elseString . $elseStat->__toString();
         }
 

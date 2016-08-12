@@ -24,7 +24,8 @@ class OverallTest extends PHPUnit_Framework_TestCase
         self::$evaluator = new FunctionParser();
     }
 
-    public function testNormalIf() {
+    public function testNormalIf()
+    {
         $stringToTest = "let a = 5
         if a = 4
         then return 4
@@ -36,17 +37,19 @@ class OverallTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($result, self::$evaluator->resolve($stringToTest));
     }
 
-    public function testNormal() {
+    public function testNormal()
+    {
         $structToTest = "let a = 5
         if a = 4
         then return 4
         else if a = 5
         then return a";
 
-        $this->assertEquals(5,self::$evaluator->resolve($structToTest));
+        $this->assertEquals(5, self::$evaluator->resolve($structToTest));
     }
 
-    public function testShouldReturnString() {
+    public function testShouldReturnString()
+    {
 
         $stringToTest = "if 4 = 7
             then return \"should not return\"

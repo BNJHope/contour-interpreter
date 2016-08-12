@@ -13,7 +13,8 @@ use contour\parser\expressions\BooleanExpression;
 use contour\parser\expressions\iExpression;
 use contour\parser\expressions\OperationExpression;
 
-class ExpressionTreeConstructor {
+class ExpressionTreeConstructor
+{
 
     /**
      * @var iExpression[]
@@ -30,49 +31,11 @@ class ExpressionTreeConstructor {
     }
 
     /**
-     * Performs a stack pop operation on the array of expressions.
-     * @return mixed The expression on the top of the stack.
-     * The expression on the top of the stack.
-     * @throws ExpressionParseException
-     * This exception is thrown if the stack is empty.
-     */
-    function pop() {
-        if(!$this->isEmpty())
-            return array_pop($this->stack);
-        else
-            throw new ExpressionParseException("Stack empty");
-    }
-
-    /**
-     * Returns true or false depending on whether there are any elements left in the stack or not.
-     * @return bool
-     */
-    function isEmpty() {
-        return empty($this->stack);
-    }
-
-    /**
-     * Returns the expression at the top of the stack
-     * without popping it off of the stack.
-     * @return iExpression
-     * The expression at the top of the stack.
-     * @throws ExpressionParseException
-     * This exception is thrown if the stack is empty.
-     */
-    function top() {
-        if(!$this->isEmpty())
-            return $this->stack[count($this->stack) - 1];
-        else
-            throw new ExpressionParseException("Invalid Assignments");
-    }
-
-    /**
      * Converts the postfix array into a tree of expressions to be evaluated in correct order.
      * @return BooleanExpression
      */
-    function convertArrayToTree() {
-
-
+    function convertArrayToTree()
+    {
 
         /**
          * The expression at the top of the stack.
@@ -82,15 +45,15 @@ class ExpressionTreeConstructor {
         /**
          * If the stack has only one value and it is not an operation then return that value.
          */
-        if(!$this->isOperator($current)){
+        if (!$this->isOperator($current)) {
 
             $totalExpr = $current;
 
-        /**
-         * If there are more than one expressions in the stack and the first one is an operation
-         * then set the next expression in the tree to that operation and recursively get the other values
-         * for the tree.
-         */
+            /**
+             * If there are more than one expressions in the stack and the first one is an operation
+             * then set the next expression in the tree to that operation and recursively get the other values
+             * for the tree.
+             */
         } else {
 
             /**
@@ -123,13 +86,38 @@ class ExpressionTreeConstructor {
     }
 
     /**
+     * Performs a stack pop operation on the array of expressions.
+     * @return mixed The expression on the top of the stack.
+     * The expression on the top of the stack.
+     * @throws ExpressionParseException
+     * This exception is thrown if the stack is empty.
+     */
+    function pop()
+    {
+        if (!$this->isEmpty())
+            return array_pop($this->stack);
+        else
+            throw new ExpressionParseException("Stack empty");
+    }
+
+    /**
+     * Returns true or false depending on whether there are any elements left in the stack or not.
+     * @return bool
+     */
+    function isEmpty()
+    {
+        return empty($this->stack);
+    }
+
+    /**
      * Determines whether a given expression is an operation or not.
      * @param $expr iExpression
      * The expression to evaluate.
      * @return bool
      * Returns true if the expression is an operation, false if not.
      */
-    function isOperator($expr) {
+    function isOperator($expr)
+    {
         return ($expr instanceof OperationExpression);
     }
 
@@ -137,7 +125,8 @@ class ExpressionTreeConstructor {
      * Gets the next expression on the stack.
      * @return iExpression
      */
-    function getNextExpression() {
+    function getNextExpression()
+    {
         /**
          * Checks the top of the stack to see what type of expression it is.
          */
@@ -146,12 +135,12 @@ class ExpressionTreeConstructor {
         /**
          * If it is an operator, then evaluate the rest of that expression recursively.
          */
-        if($this->isOperator($current)) {
+        if ($this->isOperator($current)) {
             $exprToAdd = $this->convertArrayToTree();
 
-        /**
-         * Otherwise, add the single expression to the tree.
-         */
+            /**
+             * Otherwise, add the single expression to the tree.
+             */
         } else {
             $exprToAdd = $this->pop();
         }
@@ -160,5 +149,21 @@ class ExpressionTreeConstructor {
          * Returns the expression that was found.
          */
         return $exprToAdd;
+    }
+
+    /**
+     * Returns the expression at the top of the stack
+     * without popping it off of the stack.
+     * @return iExpression
+     * The expression at the top of the stack.
+     * @throws ExpressionParseException
+     * This exception is thrown if the stack is empty.
+     */
+    function top()
+    {
+        if (!$this->isEmpty())
+            return $this->stack[count($this->stack) - 1];
+        else
+            throw new ExpressionParseException("Invalid Assignments");
     }
 }

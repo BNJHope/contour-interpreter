@@ -2,8 +2,6 @@
 
 namespace contour\parser\expressions;
 
-use contour\parser\expressions\iExpression;
-
 /**
  * Class TagExpression
  * @package bnjhope\php_parser\expressions
@@ -15,6 +13,13 @@ class TagExpression implements iExpression
      * The tag stored by the expression.
      */
     private $tags;
+
+    public static function withValues($tags)
+    {
+        $instance = new self();
+        $instance->setTags($tags);
+        return $instance;
+    }
 
     /**
      * @return \string[]
@@ -55,12 +60,5 @@ class TagExpression implements iExpression
         }
 
         return "#(" . $tagString . ")";
-    }
-
-    public static function withValues($tags)
-    {
-        $instance = new self();
-        $instance->setTags($tags);
-        return $instance;
     }
 }

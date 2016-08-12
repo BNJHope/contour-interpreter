@@ -1,6 +1,7 @@
 <?php
 
 namespace contour\parser\exceptions;
+
 use Exception;
 
 /**

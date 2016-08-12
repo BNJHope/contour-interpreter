@@ -1,13 +1,15 @@
 <?php
 
 namespace contour\parser\expressions;
+
 use contour\parser\VariableMap;
 
 /**
  * Interface iExpression
  * @package bnjhope\php_parser\expressions
  */
-interface iExpression {
+interface iExpression
+{
 
     /**
      * Function to evaluate an expression and return the result from evaluating the expression.

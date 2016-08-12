@@ -1,14 +1,15 @@
 <?php
 
 namespace contour\parser\expressions;
-use contour\parser\expressions\iExpression;
+
 use contour\parser\VariableMap;
 
 /**
  * Class VariableDeclarationExpression
  * @package bnjhope\php_parser\expressions
  */
-class VariableDeclarationExpression implements iExpression {
+class VariableDeclarationExpression implements iExpression
+{
 
     /**
      * @var string
@@ -25,27 +26,12 @@ class VariableDeclarationExpression implements iExpression {
      * @param $value
      * @return VariableDeclarationExpression
      */
-    public static function withValues($key, $value) {
+    public static function withValues($key, $value)
+    {
         $instance = new self();
         $instance->setIdentifier($key);
         $instance->setValue($value);
         return $instance;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * @param string $identifier
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
     }
 
     /**
@@ -68,8 +54,25 @@ class VariableDeclarationExpression implements iExpression {
      * @param VariableMap $vars
      * @return mixed|void
      */
-    public function evaluate($vars){
+    public function evaluate($vars)
+    {
         $vars->setVariable($this->getIdentifier(), $this->value->evaluate($vars));
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    /**
+     * @param string $identifier
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
     }
 
     /**

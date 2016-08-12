@@ -1,8 +1,8 @@
 <?php
 
 namespace contour\parser\expressions;
+
 use contour\parser\exceptions\ExpressionEvaluationException;
-use contour\parser\expressions\iExpression;
 use contour\parser\VariableMap;
 
 /**
@@ -17,13 +17,14 @@ class RawValueExpression implements iExpression
      */
     private $value;
 
-    function __construct($value) {
+    function __construct($value)
+    {
         $this->value = $value;
     }
 
     public function __toString()
     {
-       return $this->value;
+        return $this->value;
     }
 
     /**
@@ -50,7 +51,7 @@ class RawValueExpression implements iExpression
      */
     public function evaluate($vars)
     {
-        switch(true) {
+        switch (true) {
             case (substr($this->value, -1) == "\"") && (substr($this->value, 0, 1) == "\"") :
                 return $this->value;
             //if it scans correctly as an integer

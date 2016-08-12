@@ -1,7 +1,6 @@
 <?php
 
 namespace contour\parser\expressions;
-use contour\parser\expressions\iExpression;
 
 /**
  * Class OperationExpression

@@ -18,7 +18,8 @@ class FunctionParser
 
     private $evaluator;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->parser = new ExprParserController();
         $this->evaluator = new ExprEvaluator();
     }
@@ -29,7 +30,8 @@ class FunctionParser
      * The function to be resolved.
      * @return mixed|string
      */
-    public function resolve($functionString, $params) {
+    public function resolve($functionString, $params)
+    {
         $functionExprs = array();
 
         try {

@@ -25,16 +25,18 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
         self::$parser = new ExprParserController();
     }
 
-    public function testIf() {
+    public function testIf()
+    {
         $structToTest = self::$parser->parse("params ()
             if 4 = 7
             then return \"should not return\"
             else return \"should return\"");
 
-        $this->assertEquals("\"should return\"" ,self::$evaluator->evaluate($structToTest, []));
+        $this->assertEquals("\"should return\"", self::$evaluator->evaluate($structToTest, []));
     }
 
-    public function testNormal() {
+    public function testNormal()
+    {
         $structToTest = self::$parser->parse("params (x, y)
         let a = x * (2 + 2)
         if a=y
@@ -42,8 +44,8 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
         else if a + x = 3
         then return 0");
 
-        $result = self::$evaluator->evaluate($structToTest, [2,8]);
+        $result = self::$evaluator->evaluate($structToTest, [2, 8]);
 
-        $this->assertEquals(1,$result);
+        $this->assertEquals(1, $result);
     }
 }

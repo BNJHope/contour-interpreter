@@ -15,23 +15,25 @@ class FunctionCallParser
 {
 
     /**
+     * The keyword used for declaring a function.
+     * @var string
+     */
+    public static $funcConst = "func";
+    /**
      * @var ParseStack
      * The stack used for parsing.
      */
     private $stack;
-
     /**
      * @var string
      * The expression to parse in string form.
      */
     private $expr;
-
     /**
      * @var array
      * Representation of the expression to be parsed as an array of characters.
      */
     private $exprArray;
-
     /**
      * @var integer
      * The current location of the parser in the expression.
@@ -43,13 +45,8 @@ class FunctionCallParser
         $this->stack = new ParseStack();
     }
 
-    /**
-     * The keyword used for declaring a function.
-     * @var string
-     */
-    public static $funcConst = "func";
-
-    public function parse($expr) {
+    public function parse($expr)
+    {
 
         //set the parse index to the beginning of the expression
         $this->parseIndex = 0;
@@ -58,7 +55,7 @@ class FunctionCallParser
         //is everything after and not including the hashtag.
         $contents = explode("/", $expr, 2);
 
-        if($contents[0] != self::$funcConst) {
+        if ($contents[0] != self::$funcConst) {
             throw new ExpressionParseException("func keyword not found before hashtag");
         }
 
@@ -89,7 +86,8 @@ class FunctionCallParser
      * @throws ExpressionParseException
      * If the expression is syntactically incorrect, then this expression is thrown.
      */
-    function parseCommaSeparatedBrackets() {
+    function parseCommaSeparatedBrackets()
+    {
 
         /**
          * The current character being looked at by the parser.
@@ -118,20 +116,20 @@ class FunctionCallParser
 
         //it is a syntax error if no open bracket is found at the start. If there is none found, then
         //throw this exception.
-        if($this->getNextChar() != "(") {
+        if ($this->getNextChar() != "(") {
             throw new ExpressionParseException("Open bracket not found");
         }
 
         //while the close bracket has not been found and while the
         //there are still characters to be parsed in the stream
-        while(!$closeBracketFound && $this->hasNext()) {
+        while (!$closeBracketFound && $this->hasNext()) {
 
             //set the current character as the next character
             //in the stream
             $currentChar = $this->getNextChar();
 
             //determine what to do based on what the current character is
-            switch($currentChar) {
+            switch ($currentChar) {
 
                 //if its a comma, add the new value to the array
                 case "," :

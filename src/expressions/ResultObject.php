@@ -1,7 +1,6 @@
 <?php
 
 namespace contour\parser\expressions;
-use contour\parser\expressions\iExpression;
 
 /**
  * Class ResultObject
@@ -16,7 +15,8 @@ class ResultObject implements iExpression
      */
     private $result;
 
-    public static function withValue($value) {
+    public static function withValue($value)
+    {
         $instance = new self();
         $instance->setResult($value);
         return $instance;
@@ -36,7 +36,6 @@ class ResultObject implements iExpression
     {
         return "return : " . $this->result;
     }
-
 
 
     /**

@@ -18,7 +18,6 @@ use PHPUnit_Framework_TestCase;
  * Date: 13/07/2016
  * Time: 10:07
  */
-
 class ParserTest extends PHPUnit_Framework_TestCase
 {
 
@@ -87,8 +86,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
     /**
      * Tests if "if 7 = 7" returns as expected
      */
-    public function testIfValidBasicInt() {
-        $objToTest = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="),new RawValueExpression("8"));
+    public function testIfValidBasicInt()
+    {
+        $objToTest = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="), new RawValueExpression("8"));
 
         $this->assertEquals($objToTest, self::$parser->parse(self::$ifValidBasicInt));
     }
@@ -96,7 +96,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
     /**
      * Tests if "if (7 = 8)" returns as expected
      */
-    public function testIfValidBracket1Int() {
+    public function testIfValidBracket1Int()
+    {
         $objToTest = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="), new RawValueExpression("8"));
         $this->assertEquals($objToTest, self::$parser->parse(self::$ifValidBracket1Int));
     }
@@ -104,7 +105,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
     /**
      * Tests if "if (7) = (8)" returns as expected
      */
-    public function testIfValidBracket2Int() {
+    public function testIfValidBracket2Int()
+    {
 
         $objToTest = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="), new RawValueExpression("8"));
 
@@ -114,7 +116,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
     /**
      * Tests if "if (7 = 8) & (9 = 10)" returns as expected
      */
-    public function testIfValidBracket3Int() {
+    public function testIfValidBracket3Int()
+    {
         $subobj1 = BooleanExpression::withValues(new RawValueExpression("7"), new OperationExpression("="), new RawValueExpression("8"));
         $subobj2 = BooleanExpression::withValues(new RawValueExpression("9"), new OperationExpression("="), new RawValueExpression("10"));
 
@@ -126,9 +129,10 @@ class ParserTest extends PHPUnit_Framework_TestCase
     /**
      * Tests if "if (("house" = 8) & 1) > (("money" < 2) | ("trees" = 8))" returns as expected
      */
-    public function testMixedNested() {
+    public function testMixedNested()
+    {
         $subobj1 = BooleanExpression::withValues(new RawValueExpression("\"house\""), new OperationExpression("="), new RawValueExpression("8"));
-        $subobj2 = BooleanExpression::withValues($subobj1,new OperationExpression("&"), new RawValueExpression("1"));
+        $subobj2 = BooleanExpression::withValues($subobj1, new OperationExpression("&"), new RawValueExpression("1"));
 
         $subobj3 = BooleanExpression::withValues(new RawValueExpression("\"money\""), new OperationExpression("<"), new RawValueExpression("2"));
         $subobj4 = BooleanExpression::withValues(new RawValueExpression("\"trees\""), new OperationExpression("="), new RawValueExpression("8"));
@@ -141,27 +145,31 @@ class ParserTest extends PHPUnit_Framework_TestCase
     /**
      * Tests if "let test = 4" returns as expected
      */
-    public function testIfValidVariableStatement() {
+    public function testIfValidVariableStatement()
+    {
         $objToTest = VariableDeclarationExpression::withValues(new RawValueExpression("test"), new RawValueExpression("4"));
 
         $this->assertEquals($objToTest, self::$parser->parse(self::$letValidStatement));
     }
 
-    public function testIfValidReturnStatement() {
+    public function testIfValidReturnStatement()
+    {
         $objToTest = ResultObject::withValue("house");
 
         $this->assertEquals($objToTest, self::$parser->parse(self::$returnValidStatement));
 
     }
 
-    public function testIfValidThenReturnStatement() {
+    public function testIfValidThenReturnStatement()
+    {
         $resObj = ResultObject::withValue("house");
         $objToTest = ThenExpression::withValue($resObj);
 
         $this->assertEquals($objToTest, self::$parser->parse(self::$thenValidStatement));
     }
 
-    public function testTagExpression(){
+    public function testTagExpression()
+    {
         $objToTest = TagExpression::withValues(array("test", "test2"));
 
         $objToTest = VariableDeclarationExpression::withValues(new RawValueExpression("a"), $objToTest);

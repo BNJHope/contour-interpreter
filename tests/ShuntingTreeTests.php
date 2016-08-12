@@ -29,37 +29,42 @@ class ShuntingTreeTests extends PHPUnit_Framework_TestCase
         self::$parser = new ExprParser();
     }
 
-    public function testBasicArithmetic() {
+    public function testBasicArithmetic()
+    {
         $test = "3+3*2";
         $multiplyExpression = BooleanExpression::withValues(new RawValueExpression(3), new OperationExpression("*"), new RawValueExpression(2));
         $overallExpression = BooleanExpression::withValues(new RawValueExpression(3), new OperationExpression("+"), $multiplyExpression);
         $this->assertEquals($overallExpression, self::$parser->testShuntTree($test));
     }
 
-    public function testBrackets() {
+    public function testBrackets()
+    {
         $test = "(3 + 3) * 2";
         $bracketsExpression = BooleanExpression::withValues(new RawValueExpression(3), new OperationExpression("+"), new RawValueExpression(3));
         $result = BooleanExpression::withValues($bracketsExpression, new OperationExpression("*"), new RawValueExpression(2));
         $this->assertEquals($result, self::$parser->testShuntTree($test));
     }
 
-    public function testRawString() {
+    public function testRawString()
+    {
         $test = "\"test\"";
         $result = BooleanExpression::withValues(new RawValueExpression("\"test\""));
         $this->assertEquals($result, self::$parser->testShuntTree($test));
     }
 
-    public function testBracketedChars() {
+    public function testBracketedChars()
+    {
         $test = "(3) + (3)";
         $result = BooleanExpression::withValues(new RawValueExpression(3), new OperationExpression("+"), new RawValueExpression(3));
         $this->assertEquals($result, self::$parser->testShuntTree($test));
     }
 
-    public function testExtended() {
+    public function testExtended()
+    {
         $test = "3 * (4&5)+ \"klsefs\" / (test |2)";
 
         //Left Hand side
-        $andExpression = BooleanExpression::withValues(new RawValueExpression(4), new OperationExpression("&"),  new RawValueExpression(5));
+        $andExpression = BooleanExpression::withValues(new RawValueExpression(4), new OperationExpression("&"), new RawValueExpression(5));
         $multiplicationExpr = BooleanExpression::withValues(new RawValueExpression(3), new OperationExpression("*"), $andExpression);
 
         //Right hand side
@@ -71,7 +76,8 @@ class ShuntingTreeTests extends PHPUnit_Framework_TestCase
         $this->assertEquals($result, self::$parser->testShuntTree($test));
     }
 
-    public function testTag() {
+    public function testTag()
+    {
         $test = "#(test1, test2) + 3";
         $result = BooleanExpression::withValues(TagExpression::withValues(["test1", "test2"]), new OperationExpression("+"), new RawValueExpression(3));
         $this->assertEquals($result, self::$parser->testShuntTree($test));

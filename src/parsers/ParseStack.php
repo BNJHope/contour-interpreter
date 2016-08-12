@@ -1,29 +1,32 @@
 <?php
 
 namespace contour\parser\parsers;
+
 use contour\parser\exceptions\StackEmptyException;
 
 /**
  * Class ParseStack
  * Basic stack class for the parser to store characters used.
  */
-class ParseStack {
+class ParseStack
+{
     /**
      * @var integer
      * Current size of the stack.
      */
-	private $size;
+    private $size;
 
     /**
      * @var array
      * The contents of the stack.
      */
-	private $stackContents;
+    private $stackContents;
 
     /**
      * ParseStack constructor
      */
-    function __construct() {
+    function __construct()
+    {
         $this->stackContents = [];
     }
 
@@ -32,31 +35,35 @@ class ParseStack {
      * @throws StackEmptyException
      * Pops first element off of the stack.
      */
-	public function pop() {
-        if(empty($this->stackContents)) {
-          throw new StackEmptyException();
+    public function pop()
+    {
+        if (empty($this->stackContents)) {
+            throw new StackEmptyException();
         } else {
-          $this->size--;
-          return array_pop($this->stackContents);
+            $this->size--;
+            return array_pop($this->stackContents);
         }
-	}
+    }
 
     /**
      * Pushes the given contents onto the top of the stack.
      * @param $contents
      * The contents to be pushed onto the stack.
      */
-  public function push($contents) {
-      $this->size++;
-      array_push($this->stackContents, $contents);
-  }
+    public function push($contents)
+    {
+        $this->size++;
+        array_push($this->stackContents, $contents);
+    }
 
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return empty($this->stackContents);
     }
 
-    public function top() {
-        if(empty($this->stackContents)) return null;
+    public function top()
+    {
+        if (empty($this->stackContents)) return null;
         else return $this->stackContents[$this->size - 1];
     }
 }

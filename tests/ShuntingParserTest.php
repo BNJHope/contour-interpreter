@@ -28,43 +28,50 @@ class ShuntingParserTest extends PHPUnit_Framework_TestCase
         self::$parser = new ExprParser();
     }
 
-    public function testBasicArithmetic() {
+    public function testBasicArithmetic()
+    {
         $test = "3+3*2";
         $result = [new RawValueExpression(3), new RawValueExpression(3), new RawValueExpression(2), new OperationExpression("*"), new OperationExpression("+")];
         $this->assertEquals($result, self::$parser->testShunt($test));
     }
 
-    public function testWithWhitespace() {
+    public function testWithWhitespace()
+    {
         $test = "3 + 3 * 2";
         $result = [new RawValueExpression(3), new RawValueExpression(3), new RawValueExpression(2), new OperationExpression("*"), new OperationExpression("+")];
         $this->assertEquals($result, self::$parser->testShunt($test));
     }
 
-    public function testBrackets() {
+    public function testBrackets()
+    {
         $test = "(3 + 3) * 2";
         $result = [new RawValueExpression(3), new RawValueExpression(3), new OperationExpression("+"), new RawValueExpression(2), new OperationExpression("*")];
         $this->assertEquals($result, self::$parser->testShunt($test));
     }
 
-    public function testRawString() {
+    public function testRawString()
+    {
         $test = "\"test\"";
         $result = [new RawValueExpression("\"test\"")];
         $this->assertEquals($result, self::$parser->testShunt($test));
     }
 
-    public function testBracketedChars() {
+    public function testBracketedChars()
+    {
         $test = "(3) + (3)";
         $result = [new RawValueExpression(3), new RawValueExpression(3), new OperationExpression("+")];
         $this->assertEquals($result, self::$parser->testShunt($test));
     }
 
-    public function testExtended() {
+    public function testExtended()
+    {
         $test = "3 * (4&5)+ \"klsefs\" / (test |2)";
         $result = [new RawValueExpression(3), new RawValueExpression(4), new RawValueExpression(5), new OperationExpression("&"), new OperationExpression("*"), new RawValueExpression("\"klsefs\""), new RawValueExpression("test"), new RawValueExpression(2), new OperationExpression("|"), new OperationExpression("/"), new OperationExpression("+")];
         $this->assertEquals($result, self::$parser->testShunt($test));
     }
 
-    public function testTag() {
+    public function testTag()
+    {
         $test = "#(test1, test2) + 3";
         $result = [TagExpression::withValues(["test1", "test2"]), new RawValueExpression(3), new OperationExpression("+")];
         $this->assertEquals($result, self::$parser->testShunt($test));

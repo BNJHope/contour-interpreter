@@ -25,7 +25,8 @@ class FunctionContainer
      */
     private $functionTree;
 
-    public function __construct($functionTree) {
+    public function __construct($functionTree)
+    {
         $this->functionTree = $functionTree;
     }
 

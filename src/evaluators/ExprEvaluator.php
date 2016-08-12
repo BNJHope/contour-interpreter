@@ -5,15 +5,14 @@ namespace contour\parser\evaluators;
 use contour\parser\exceptions\ExpressionEvaluationException;
 use contour\parser\expressions\iExpression;
 use contour\parser\expressions\ParamsExpression;
-use contour\parser\expressions\RawValueExpression;
-use contour\parser\tests\EvaluatorTest;
 use contour\parser\VariableMap;
 
 /**
  * Class ExprEvaluator
  * @package bnjhope\php_parser\evaluators
  */
-class ExprEvaluator {
+class ExprEvaluator
+{
 
     /**
      * The pointer to the current instruction in the function array.
@@ -21,7 +20,8 @@ class ExprEvaluator {
      */
     private $instrPtr;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->instrPtr = 1;
     }
 
@@ -34,7 +34,8 @@ class ExprEvaluator {
      * Whatever the result of the function might be.
      * @throws ExpressionEvaluationException
      */
-    public function evaluate($function, $params) {
+    public function evaluate($function, $params)
+    {
         //set the instrPtr to 1, as the first instr should be a params expression for parameters, which will be dealt with
         //separately beforehand
         $this->instrPtr = 1;
@@ -57,9 +58,9 @@ class ExprEvaluator {
             throw new ExpressionEvaluationException("No params statement found");
         else {
 
-        /**
-         * Otherwise, set the parameters of the fu
-         */
+            /**
+             * Otherwise, set the parameters of the fu
+             */
             $vars = $this->setParams($function[0], $params);
         }
 
@@ -67,7 +68,7 @@ class ExprEvaluator {
          * Executes instructions until a result has been returned or until there are no more instructions
          * to execute.
          */
-        while(!$endOfFunction && $result == null ) {
+        while (!$endOfFunction && $result == null) {
 
             /**
              * Sets the result of the evaluation as the result to be returned.
@@ -84,7 +85,7 @@ class ExprEvaluator {
              * If the instruction pointer has reached its limit
              * then exit the loop.
              */
-            if($this->instrPtr >= count($function)) {
+            if ($this->instrPtr >= count($function)) {
                 $endOfFunction = true;
             }
         }
@@ -98,7 +99,8 @@ class ExprEvaluator {
      * @param $params
      * @return VariableMap
      */
-    function setParams($paramsLine, $params) {
+    function setParams($paramsLine, $params)
+    {
 
         /**
          * The variable map for the evaluator to use.
@@ -114,7 +116,7 @@ class ExprEvaluator {
         /**
          * For every paramters
          */
-        for($i = 0; $i < count($params); $i++) {
+        for ($i = 0; $i < count($params); $i++) {
             /**
              * Set the parameters for the function and places them in the variable map.
              */

@@ -1,7 +1,6 @@
 <?php
 
 namespace contour\parser\expressions;
-use contour\parser\expressions\iExpression;
 
 /**
  * Class ElseExpression
@@ -27,7 +26,7 @@ class ElseExpression implements iExpression
 
     public function __toString()
     {
-       return "ELSE : " . $this->subExpression->__toString();
+        return "ELSE : " . $this->subExpression->__toString();
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 namespace contour\parser;
+
 use contour\parser\exceptions\ExpressionEvaluationException;
 
 /**
@@ -25,9 +26,10 @@ class VariableMap
      * @throws ExpressionEvaluationException
      * If there is not a value stored at the given key then this exception is thrown.
      */
-    public function getVariable($key) {
+    public function getVariable($key)
+    {
 
-        if(array_key_exists($key, $this->variables))
+        if (array_key_exists($key, $this->variables))
             return $this->variables[$key];
         else
             throw new ExpressionEvaluationException("Variable " . $key . " not found.");
@@ -40,7 +42,8 @@ class VariableMap
      * @param $value
      * The value of the variable to be stored.
      */
-    public function setVariable($key, $value) {
+    public function setVariable($key, $value)
+    {
         $this->variables[$key] = $value;
     }
 

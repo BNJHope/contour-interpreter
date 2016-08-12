@@ -36,7 +36,8 @@ class FunctionInitialiser
     /**
      * @return FunctionContainer
      */
-    function getFunction() {
+    function getFunction()
+    {
 
     }
 

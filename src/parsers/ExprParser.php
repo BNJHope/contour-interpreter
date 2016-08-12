@@ -2,8 +2,9 @@
 
 namespace contour\parser\parsers;
 
-use contour\parser\expressions\BooleanExpression;
 use contour\parser\exceptions\ExpressionParseException;
+use contour\parser\exceptions\StackEmptyException;
+use contour\parser\expressions\BooleanExpression;
 use contour\parser\expressions\ElseExpression;
 use contour\parser\expressions\iExpression;
 use contour\parser\expressions\OperationExpression;
@@ -13,8 +14,6 @@ use contour\parser\expressions\ResultObject;
 use contour\parser\expressions\TagExpression;
 use contour\parser\expressions\ThenExpression;
 use contour\parser\expressions\VariableDeclarationExpression;
-use contour\parser\parsers\ParseStack;
-use contour\parser\exceptions\StackEmptyException;
 
 /**
  * Class ExprParser
@@ -28,39 +27,34 @@ class ExprParser
      * The stack used for parsing.
      */
     private $stack;
+    /**
+     * @var array
+     * Words at the start of lines that determine what type of command is being called.
+     */
+    private $linestarts = array("if", "then", "else", "let", "return", "params");
+    /**
+     * @var string
+     * The expression to parse in string form.
+     */
+    private $expr;
+    /**
+     * @var array
+     * Representation of the expression to be parsed as an array of characters.
+     */
+    private $exprArray;
+    /**
+     * @var integer
+     * The current location of the parser in the expression.
+     */
+    private $parseIndex;
+    private $boolExprs = ["=", ">", "<", "<=", ">="];
+    private $arithmeticExprs = ["+", "-", "*", "/", "%", "&", "|"];
 
     public function __construct()
     {
         $this->stack = new ParseStack();
     }
 
-    /**
-     * @var array
-     * Words at the start of lines that determine what type of command is being called.
-     */
-    private $linestarts = array("if", "then", "else", "let", "return", "params");
-
-    /**
-     * @var string
-     * The expression to parse in string form.
-     */
-    private $expr;
-
-    /**
-     * @var array
-     * Representation of the expression to be parsed as an array of characters.
-     */
-    private $exprArray;
-
-    /**
-     * @var integer
-     * The current location of the parser in the expression.
-     */
-    private $parseIndex;
-
-    private $boolExprs = ["=", ">", "<", "<=", ">="];
-
-    private $arithmeticExprs = ["+", "-", "*", "/", "%", "&", "|"];
     /**
      * Parses a line of the function that is passed to the program.
      * @param $expr
@@ -112,6 +106,23 @@ class ExprParser
         }
 
         return $resultObject;
+    }
+
+    /**
+     * Initialises the parser with the given expression by setting the expression properties
+     * and restarting the parse index
+     * @param $exprToSetUp
+     */
+    function setUpParser($exprToSetUp)
+    {
+        //set the objects expression property to the expression passed to the
+        $this->expr = $exprToSetUp;
+
+        //Set the objects expression array to the exploded expression string.
+        $this->exprArray = str_split($this->expr);
+
+        //Set the parse index of the object back to the start.
+        $this->parseIndex = 0;
     }
 
     /**
@@ -171,6 +182,17 @@ class ExprParser
     }
 
     /**
+     * @return string
+     * Gets the next character in the expression.
+     */
+    function getNextChar()
+    {
+        $charToReturn = $this->exprArray[$this->parseIndex];
+        $this->parseIndex++;
+        return $charToReturn;
+    }
+
+    /**
      * Parses a boolean expression in the grammar.
      * @throws ExpressionParseException
      * If the statement is syntactically incorrect, then this exception is thrown.
@@ -187,179 +209,185 @@ class ExprParser
         return $result;
     }
 
-
     /**
-     * Parses a then statement and returns a result object from it.
-     * @return iExpression
-     * A parsed expression following the then statement.
-     * @throws ExpressionParseException
-     * If the expression is syntactically incorrect then this exception is thrown.
-     * @throws StackEmptyException
-     * If the stack is empty when the parser tries to pop from it then this exception is thrown.
+     * Parses a string of arithmetic and boolean operations and determines their result.
+     * @return BooleanExpression
      */
-    function parseThen()
+    function getExpressionTree()
     {
         /**
-         * Gets the statement to do after the then
+         * The tree constructor for the following expression.
          */
-        $nextInstruction = $this->getType();
+        $treeConstructor = new ExpressionTreeConstructor($this->shunt());
 
         /**
-         * The object to be returned
+         * The tree formed from the tree constructor out of the expression parsed
          */
-        $resultObject = new ThenExpression();
+        $expressionToReturn = $treeConstructor->convertArrayToTree();
 
-        switch ($nextInstruction) {
-
-            //if it is another if statement
-            case $this->linestarts[0] :
-                $resultObject->setSubExpression($this->parseIf());
-                break;
-
-            //if it is a variable declaration
-            case $this->linestarts[3] :
-                $resultObject->setSubExpression($this->parseVariable());
-                break;
-
-            //if it is a return statement
-            case $this->linestarts[4] :
-                $resultObject->setSubExpression($this->parseReturn());
-                break;
-            default :
-                throw new ExpressionParseException("Invalid instruction following the THEN statement");
-        }
-
-        return $resultObject;
-    }
-
-    function parseElse()
-    {
-        /**
-         * Gets the statement to do after the then
-         */
-        $nextInstruction = $this->getType();
-
-        /**
-         * The object to be returned
-         */
-        $resultObject = new ElseExpression();
-
-        switch ($nextInstruction) {
-            //if it is another if statement
-            case $this->linestarts[0] :
-                $resultObject->setSubExpression($this->parseIf());
-                break;
-
-            //if it is a variable declaration
-            case $this->linestarts[3] :
-                $resultObject->setSubExpression($this->parseVariable());
-                break;
-
-            //if it is a return statement
-            case $this->linestarts[4] :
-                $resultObject->setSubExpression($this->parseReturn());
-                break;
-            default :
-                throw new ExpressionParseException("Invalid instruction following the THEN statement");
-        }
-
-        return $resultObject;
+        return $expressionToReturn;
     }
 
     /**
-     * Parses a return statement.
-     * @return ResultObject
-     * The result object parsed from this method.
-     * @throws ExpressionParseException
-     * This is thrown when there is a syntax error of some description.
+     * Determines the tree of boolean operations from a line of operations.
      */
-    function parseReturn()
+    function shunt()
     {
 
         /**
-         * The string to be returned.
-         * @var string
+         * The stack that will be used to hold the different values during the process of the algorithm.
          */
-        $result = new ResultObject();
+        $workingStack = [];
 
         /**
-         * The raw result to return.
+         * The resulting stack that contains the expressions in correct order.
          */
-        $resString = "";
+        $output = [];
 
-        if (!$this->hasNext()) {
-            throw new ExpressionParseException("Not given anything to return.");
+        /**
+         * The token object that is being checked in the shunting process.
+         */
+        $token = null;
+
+        /**
+         * Determines if a close bracket term has been found.
+         */
+        $closeBracketFound = false;
+
+        /**
+         * Determines if the inner loop which determines the order of operators in the output
+         * needs to end or not depending on the precedences of the operators.
+         */
+        $innerLoopEnd = false;
+
+        /**
+         * While there are still tokens in the stream...
+         */
+        while ($this->hasNext() && !$closeBracketFound) {
+
+            /**
+             * Get the next token.
+             */
+            $token = $this->getNextToken();
+
+            /**
+             * If the token is a close bracket then exit the loop
+             */
+            if ($token == ")")
+                $closeBracketFound = true;
+
+            /**
+             * If it is a raw value of some description then push it onto the stack to be returned.
+             */
+            else if (($token instanceof RawValueExpression) || ($token instanceof TagExpression))
+                array_push($output, $token);
+
+            /**
+             * If it is an operator then check the order of the stack.
+             */
+            else if ($token instanceof OperationExpression) {
+
+                /**
+                 * While the working stack is not empty...
+                 */
+                while (!empty($workingStack) && !$innerLoopEnd) {
+
+                    /**
+                     * Get the operator held at the top of the working stack.
+                     * @var OperationExpression
+                     */
+                    $top = array_pop($workingStack);
+
+                    if ($this->precedence($top->getOperation()) >= $this->precedence($token->getOperation()))
+                        array_push($output, $top);
+                    else {
+                        array_push($workingStack, $top);
+                        $innerLoopEnd = true;
+                    }
+                }
+
+                array_push($workingStack, $token);
+                $innerLoopEnd = false;
+            } else if ($token == "(")
+                $output = array_merge($output, $this->shunt());
         }
 
-        //put the rest of the line as the result container
-        while ($this->hasNext()) {
-            $resString .= $this->getNextChar();
-        }
+        /**
+         * while the working stack is still not empty, push all remaining operators onto the end of the result.
+         */
+        while (!empty($workingStack))
+            array_push($output, array_pop($workingStack));
 
-        //make the result value the string from the stack.
-        $result->setResult(new RawValueExpression($resString));
-
-        return $result;
+        return $output;
     }
 
     /**
-     * Parses the line as a variable
-     * @return VariableDeclarationExpression
-     * The resulting key value pair of the variable declaration.
-     * @throws ExpressionParseException
-     * If the expression is syntactically incorrect.
-     * @throws StackEmptyException
-     * If the parser stack is empty when the parser tries to pop from it.
+     * @return bool
+     * Checks if there is still more characters in the expression to be parsed.
      */
-    function parseVariable()
+    function hasNext()
     {
-        /**
-         * Result to be returned from the function.
-         */
-        $result = new VariableDeclarationExpression();
-
-        $result->setIdentifier($this->parseIdentifier());
-
-        $result->setValue($this->getExpressionTree());
-
-        //if there is an identifier but no value then set the value as the leftover string
-        if ($result->getIdentifier() != null && $result->getValue() == null) {
-
-            //if the loop is done and there are still things left to parse
-            //then either empty the stack or empty it to the first open bracket
-            //so that it can be added to the expression
-            $exprToAdd = "";
-            while (!$this->stack->isEmpty() && $this->stack->top() != "(") {
-                $exprToAdd = $this->stack->pop() . $exprToAdd;
-            }
-
-            $result->setValue(new RawValueExpression($exprToAdd));
-
-            //if all values are filled then do nothing
-        } else if ($result->getIdentifier() != null && $result->getValue() != null) {
-
-            //any other exceptions, throw this exception
-        } else {
-            throw new ExpressionParseException("Invalid variable declaration.");
-        }
-
-        //return the resulting structure
-        return $result;
+        return $this->parseIndex < (count($this->exprArray));
     }
 
-    function parseIdentifier(){
+    /**
+     * Gets the next whole token for the shunting process.
+     * @return OperationExpression|RawValueExpression|TagExpression|null|string
+     */
+    function getNextToken()
+    {
+        /**
+         * The next expression token to be returned.
+         */
+        $exprToReturn = null;
 
-        $currentChar = "";
-        $identifier = "";
+        /**
+         * The next character in the stream.
+         */
+        $currentChar = $this->getNextChar();
 
-        while($this->hasNext() && $currentChar != "="){
+        /**
+         * Ignores any whitespace left at the beginning of the line
+         */
+        while ($currentChar == " " && $this->hasNext())
             $currentChar = $this->getNextChar();
-            if($currentChar != "=") {
-                $identifier .= $currentChar;
-            }
+
+        switch (true) {
+            case $currentChar == "#" :
+                $exprToReturn = $this->parseTag();
+                break;
+            case $currentChar == "\"" :
+                $exprToReturn = new RawValueExpression("\"" . $this->getRestOfString());
+                break;
+            case in_array($currentChar, $this->boolExprs) || in_array($currentChar, $this->arithmeticExprs) :
+                /**
+                 * Check to see if the next character in the string is a part of the operation.
+                 */
+                $extraChar = $this->getNextChar();
+
+                /**
+                 * If the operation involves multiple characters then
+                 * append the extra character to the operator string representation.
+                 */
+                if ($extraChar == "=")
+                    $currentChar .= "=";
+                else
+                    $this->moveBackPointer();
+
+                $exprToReturn = new OperationExpression($currentChar);
+                break;
+            case $currentChar == "(":
+                $exprToReturn = "(";
+                break;
+            case $currentChar == ")" :
+                $exprToReturn = ")";
+                break;
+            default :
+                $exprToReturn = new RawValueExpression($currentChar . $this->getRestOfRawValue());
+                break;
         }
 
-        return trim($identifier);
+        return $exprToReturn;
     }
 
     function parseTag()
@@ -421,11 +449,348 @@ class ExprParser
     }
 
     /**
+     * Gets rest of string when getting a string value as a token in the parser.
+     */
+    function getRestOfString()
+    {
+        /**
+         * The current character in the parser stream.
+         * @var string
+         */
+        $currentChar = "";
+
+        /**
+         * The result string to be returned.
+         * @var string
+         */
+        $result = "";
+
+        /**
+         * Add characters to the result string upto and including the next occurrence of quotation marks.
+         */
+        while ($this->hasNext() && $currentChar != "\"") {
+            $currentChar = $this->getNextChar();
+            $result .= $currentChar;
+        }
+
+        /**
+         * If the parser made it to the end of the line without completing the string parse then throw a parse exception.
+         */
+        if (!$this->hasNext() && mb_substr($result, -1) != "\"")
+            throw new ExpressionParseException("String expression did not contain terminating speech marks.");
+
+        return $result;
+    }
+
+    /**
+     * Moves back the parse pointer.
+     */
+    function moveBackPointer()
+    {
+        $this->parseIndex--;
+    }
+
+    /**
+     * Gets the remainder of a raw value.
+     */
+    function getRestOfRawValue()
+    {
+        /**
+         * The current character in the parser stream.
+         * @var string
+         */
+        $currentChar = "";
+
+        /**
+         * The result string to be returned.
+         * @var string
+         */
+        $result = "";
+
+        /**
+         * Determines whether a non alphanumeric character has been found yet.
+         */
+        $nonAlphaNumericCharacterFound = false;
+
+        /**
+         * Add characters to the result string upto and including the next occurrence of a non alphanumeric character.
+         */
+        while ($this->hasNext() && !$nonAlphaNumericCharacterFound) {
+            $currentChar = $this->getNextChar();
+            $nonAlphaNumericCharacterFound = !ctype_alnum($currentChar);
+            if ($nonAlphaNumericCharacterFound)
+                $this->moveBackPointer();
+            else
+                $result .= $currentChar;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Determines the precedence of the operation passed to the function.
+     * @param $op
+     * The operation to determine the precedence for.
+     * @return int
+     * The precedence of the given operation, where a larger number constitutes a higher precedence.
+     * @throws ExpressionParseException
+     * If it is an unrecognised operation then this expression is thrown.
+     */
+    function precedence($op)
+    {
+
+        /**
+         * Switch case depending on the operation.
+         */
+        switch ($op) {
+            /**
+             * Multiply
+             */
+            case '*' :
+                /**
+                 * Divide
+                 */
+            case '/' :
+                /**
+                 * Modulo
+                 */
+            case '%' :
+                return 7;
+
+            /**
+             * Addition
+             */
+            case '+' :
+                /**
+                 * Subtraction
+                 */
+            case '-' :
+                return 6;
+
+            /**
+             * Boolean Equals
+             */
+            case '=' :
+                /**
+                 * Less than
+                 */
+            case '<' :
+                /**
+                 * Greater than
+                 */
+            case '>' :
+                /**
+                 * Greater than or equal to
+                 */
+            case '>=' :
+                /**
+                 * Less than or equal to
+                 */
+            case '<=' :
+                return 4;
+
+            /**
+             * Boolean And
+             */
+            case '&' :
+                return 3;
+            /**
+             * Boolean Or
+             */
+            case '|' :
+                return 2;
+
+            /**
+             * If the operation doesn't fit any of the above then throw an exception.
+             */
+            default:
+                throw new ExpressionParseException("Invalid Operation : " . $op);
+        }
+
+    }
+
+    /**
+     * Parses a then statement and returns a result object from it.
+     * @return iExpression
+     * A parsed expression following the then statement.
+     * @throws ExpressionParseException
+     * If the expression is syntactically incorrect then this exception is thrown.
+     * @throws StackEmptyException
+     * If the stack is empty when the parser tries to pop from it then this exception is thrown.
+     */
+    function parseThen()
+    {
+        /**
+         * Gets the statement to do after the then
+         */
+        $nextInstruction = $this->getType();
+
+        /**
+         * The object to be returned
+         */
+        $resultObject = new ThenExpression();
+
+        switch ($nextInstruction) {
+
+            //if it is another if statement
+            case $this->linestarts[0] :
+                $resultObject->setSubExpression($this->parseIf());
+                break;
+
+            //if it is a variable declaration
+            case $this->linestarts[3] :
+                $resultObject->setSubExpression($this->parseVariable());
+                break;
+
+            //if it is a return statement
+            case $this->linestarts[4] :
+                $resultObject->setSubExpression($this->parseReturn());
+                break;
+            default :
+                throw new ExpressionParseException("Invalid instruction following the THEN statement");
+        }
+
+        return $resultObject;
+    }
+
+    /**
+     * Parses the line as a variable
+     * @return VariableDeclarationExpression
+     * The resulting key value pair of the variable declaration.
+     * @throws ExpressionParseException
+     * If the expression is syntactically incorrect.
+     * @throws StackEmptyException
+     * If the parser stack is empty when the parser tries to pop from it.
+     */
+    function parseVariable()
+    {
+        /**
+         * Result to be returned from the function.
+         */
+        $result = new VariableDeclarationExpression();
+
+        $result->setIdentifier($this->parseIdentifier());
+
+        $result->setValue($this->getExpressionTree());
+
+        //if there is an identifier but no value then set the value as the leftover string
+        if ($result->getIdentifier() != null && $result->getValue() == null) {
+
+            //if the loop is done and there are still things left to parse
+            //then either empty the stack or empty it to the first open bracket
+            //so that it can be added to the expression
+            $exprToAdd = "";
+            while (!$this->stack->isEmpty() && $this->stack->top() != "(") {
+                $exprToAdd = $this->stack->pop() . $exprToAdd;
+            }
+
+            $result->setValue(new RawValueExpression($exprToAdd));
+
+            //if all values are filled then do nothing
+        } else if ($result->getIdentifier() != null && $result->getValue() != null) {
+
+            //any other exceptions, throw this exception
+        } else {
+            throw new ExpressionParseException("Invalid variable declaration.");
+        }
+
+        //return the resulting structure
+        return $result;
+    }
+
+    function parseIdentifier()
+    {
+
+        $currentChar = "";
+        $identifier = "";
+
+        while ($this->hasNext() && $currentChar != "=") {
+            $currentChar = $this->getNextChar();
+            if ($currentChar != "=") {
+                $identifier .= $currentChar;
+            }
+        }
+
+        return trim($identifier);
+    }
+
+    /**
+     * Parses a return statement.
+     * @return ResultObject
+     * The result object parsed from this method.
+     * @throws ExpressionParseException
+     * This is thrown when there is a syntax error of some description.
+     */
+    function parseReturn()
+    {
+
+        /**
+         * The string to be returned.
+         * @var string
+         */
+        $result = new ResultObject();
+
+        /**
+         * The raw result to return.
+         */
+        $resString = "";
+
+        if (!$this->hasNext()) {
+            throw new ExpressionParseException("Not given anything to return.");
+        }
+
+        //put the rest of the line as the result container
+        while ($this->hasNext()) {
+            $resString .= $this->getNextChar();
+        }
+
+        //make the result value the string from the stack.
+        $result->setResult(new RawValueExpression($resString));
+
+        return $result;
+    }
+
+    function parseElse()
+    {
+        /**
+         * Gets the statement to do after the then
+         */
+        $nextInstruction = $this->getType();
+
+        /**
+         * The object to be returned
+         */
+        $resultObject = new ElseExpression();
+
+        switch ($nextInstruction) {
+            //if it is another if statement
+            case $this->linestarts[0] :
+                $resultObject->setSubExpression($this->parseIf());
+                break;
+
+            //if it is a variable declaration
+            case $this->linestarts[3] :
+                $resultObject->setSubExpression($this->parseVariable());
+                break;
+
+            //if it is a return statement
+            case $this->linestarts[4] :
+                $resultObject->setSubExpression($this->parseReturn());
+                break;
+            default :
+                throw new ExpressionParseException("Invalid instruction following the THEN statement");
+        }
+
+        return $resultObject;
+    }
+
+    /**
      * Parses the parameters statement for the function to use.
      * @return ParamsExpression
      * @throws ExpressionParseException
      */
-    function parseParams(){
+    function parseParams()
+    {
 
         /**
          * An array of the parameters to be used in the function.
@@ -448,12 +813,12 @@ class ExprParser
          */
         $paramName = "";
 
-        if($this->getNextChar() != "(")
+        if ($this->getNextChar() != "(")
             throw new ExpressionParseException("No open brace found for parameter expression");
 
-        while(!$closeBraceFound && $this->hasNext()) {
+        while (!$closeBraceFound && $this->hasNext()) {
             $currentChar = $this->getNextChar();
-            switch($currentChar) {
+            switch ($currentChar) {
                 case "," :
                     array_push($params, trim($paramName));
                     $paramName = "";
@@ -467,7 +832,7 @@ class ExprParser
             }
         }
 
-        if(!$closeBraceFound)
+        if (!$closeBraceFound)
             throw new ExpressionParseException("Failed to find close brace on paramaters declaration.");
 
         return new ParamsExpression($params);
@@ -499,375 +864,12 @@ class ExprParser
     }
 
     /**
-     * @return string
-     * Gets the next character in the expression.
-     */
-    function getNextChar()
-    {
-        $charToReturn = $this->exprArray[$this->parseIndex];
-        $this->parseIndex++;
-        return $charToReturn;
-    }
-
-    /**
-     * @return bool
-     * Checks if there is still more characters in the expression to be parsed.
-     */
-    function hasNext()
-    {
-        return $this->parseIndex < (count($this->exprArray));
-    }
-
-    /**
-     * Parses a string of arithmetic and boolean operations and determines their result.
-     * @return BooleanExpression
-     */
-    function getExpressionTree() {
-        /**
-         * The tree constructor for the following expression.
-         */
-        $treeConstructor = new ExpressionTreeConstructor($this->shunt());
-
-        /**
-         * The tree formed from the tree constructor out of the expression parsed
-         */
-        $expressionToReturn = $treeConstructor->convertArrayToTree();
-
-        return $expressionToReturn;
-    }
-
-    /**
-     * Determines the tree of boolean operations from a line of operations.
-     */
-    function shunt() {
-
-        /**
-         * The stack that will be used to hold the different values during the process of the algorithm.
-         */
-        $workingStack = [];
-
-        /**
-         * The resulting stack that contains the expressions in correct order.
-         */
-        $output = [];
-
-        /**
-         * The token object that is being checked in the shunting process.
-         */
-        $token = null;
-
-        /**
-         * Determines if a close bracket term has been found.
-         */
-        $closeBracketFound = false;
-
-        /**
-         * Determines if the inner loop which determines the order of operators in the output
-         * needs to end or not depending on the precedences of the operators.
-         */
-        $innerLoopEnd = false;
-
-        /**
-         * While there are still tokens in the stream...
-         */
-        while($this->hasNext() && !$closeBracketFound) {
-
-            /**
-             * Get the next token.
-             */
-            $token = $this->getNextToken();
-
-            /**
-             * If the token is a close bracket then exit the loop
-             */
-            if ($token == ")")
-                $closeBracketFound = true;
-
-            /**
-             * If it is a raw value of some description then push it onto the stack to be returned.
-             */
-            else if (($token instanceof RawValueExpression) || ($token instanceof TagExpression))
-                array_push($output, $token);
-
-            /**
-             * If it is an operator then check the order of the stack.
-             */
-            else if ($token instanceof OperationExpression) {
-
-                /**
-                 * While the working stack is not empty...
-                 */
-                while(!empty($workingStack) && !$innerLoopEnd) {
-
-                    /**
-                     * Get the operator held at the top of the working stack.
-                     * @var OperationExpression
-                     */
-                    $top = array_pop($workingStack);
-
-                    if($this->precedence($top->getOperation()) >= $this->precedence($token->getOperation()))
-                        array_push($output, $top);
-                    else {
-                        array_push($workingStack, $top);
-                        $innerLoopEnd = true;
-                    }
-                }
-
-                array_push($workingStack, $token);
-                $innerLoopEnd = false;
-            }
-
-            else if ($token == "(")
-                $output = array_merge($output, $this->shunt());
-        }
-
-        /**
-         * while the working stack is still not empty, push all remaining operators onto the end of the result.
-         */
-        while(!empty($workingStack))
-            array_push($output, array_pop($workingStack));
-
-        return $output;
-}
-
-    /**
-     * Determines the precedence of the operation passed to the function.
-     * @param $op
-     * The operation to determine the precedence for.
-     * @return int
-     * The precedence of the given operation, where a larger number constitutes a higher precedence.
-     * @throws ExpressionParseException
-     * If it is an unrecognised operation then this expression is thrown.
-     */
-    function precedence($op) {
-
-        /**
-         * Switch case depending on the operation.
-         */
-        switch ($op) {
-            /**
-             * Multiply
-             */
-            case '*' :
-            /**
-             * Divide
-             */
-            case '/' :
-            /**
-             * Modulo
-             */
-            case '%' :
-                return 7;
-
-            /**
-             * Addition
-             */
-            case '+' :
-            /**
-             * Subtraction
-             */
-            case '-' :
-                return 6;
-
-            /**
-             * Boolean Equals
-             */
-            case '=' :
-            /**
-             * Less than
-             */
-            case '<' :
-            /**
-             * Greater than
-             */
-            case '>' :
-            /**
-             * Greater than or equal to
-             */
-            case '>=' :
-            /**
-             * Less than or equal to
-             */
-            case '<=' :
-                return 4;
-
-            /**
-             * Boolean And
-             */
-            case '&' :
-                return 3;
-            /**
-             * Boolean Or
-             */
-            case '|' :
-                return 2;
-
-            /**
-             * If the operation doesn't fit any of the above then throw an exception.
-             */
-            default:
-                throw new ExpressionParseException("Invalid Operation : " . $op);
-        }
-
-    }
-
-    /**
-     * Gets the next whole token for the shunting process.
-     * @return OperationExpression|RawValueExpression|TagExpression|null|string
-     */
-    function getNextToken() {
-        /**
-         * The next expression token to be returned.
-         */
-        $exprToReturn = null;
-
-        /**
-         * The next character in the stream.
-         */
-        $currentChar = $this->getNextChar();
-
-        /**
-         * Ignores any whitespace left at the beginning of the line
-         */
-        while($currentChar == " " && $this->hasNext())
-            $currentChar = $this->getNextChar();
-
-        switch(true) {
-            case $currentChar == "#" :
-                $exprToReturn = $this->parseTag();
-                break;
-            case $currentChar == "\"" :
-                $exprToReturn = new RawValueExpression("\"" . $this->getRestOfString());
-                break;
-            case in_array($currentChar, $this->boolExprs) || in_array($currentChar, $this->arithmeticExprs) :
-                /**
-                 * Check to see if the next character in the string is a part of the operation.
-                 */
-                $extraChar = $this->getNextChar();
-
-                /**
-                 * If the operation involves multiple characters then
-                 * append the extra character to the operator string representation.
-                 */
-                if($extraChar == "=")
-                    $currentChar .= "=";
-                else
-                    $this->moveBackPointer();
-
-                $exprToReturn = new OperationExpression($currentChar);
-                break;
-            case $currentChar == "(":
-                $exprToReturn = "(";
-                break;
-            case $currentChar == ")" :
-                $exprToReturn = ")";
-                break;
-            default :
-                $exprToReturn = new RawValueExpression($currentChar . $this->getRestOfRawValue());
-                break;
-        }
-
-        return $exprToReturn;
-    }
-
-    /**
-     * Moves back the parse pointer.
-     */
-    function moveBackPointer() {
-        $this->parseIndex--;
-    }
-
-    /**
-     * Gets the remainder of a raw value.
-     */
-    function getRestOfRawValue(){
-        /**
-         * The current character in the parser stream.
-         * @var string
-         */
-        $currentChar = "";
-
-        /**
-         * The result string to be returned.
-         * @var string
-         */
-        $result = "";
-
-        /**
-         * Determines whether a non alphanumeric character has been found yet.
-         */
-        $nonAlphaNumericCharacterFound = false;
-
-        /**
-         * Add characters to the result string upto and including the next occurrence of a non alphanumeric character.
-         */
-        while($this->hasNext() && !$nonAlphaNumericCharacterFound) {
-            $currentChar = $this->getNextChar();
-            $nonAlphaNumericCharacterFound = !ctype_alnum($currentChar);
-            if($nonAlphaNumericCharacterFound)
-                $this->moveBackPointer();
-            else
-                $result .= $currentChar;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Gets rest of string when getting a string value as a token in the parser.
-     */
-    function getRestOfString() {
-        /**
-         * The current character in the parser stream.
-         * @var string
-         */
-        $currentChar = "";
-
-        /**
-         * The result string to be returned.
-         * @var string
-         */
-        $result = "";
-
-        /**
-         * Add characters to the result string upto and including the next occurrence of quotation marks.
-         */
-        while($this->hasNext() && $currentChar != "\"") {
-            $currentChar = $this->getNextChar();
-            $result .= $currentChar;
-        }
-
-        /**
-         * If the parser made it to the end of the line without completing the string parse then throw a parse exception.
-         */
-        if(!$this->hasNext() && mb_substr($result, -1) != "\"")
-            throw new ExpressionParseException("String expression did not contain terminating speech marks.");
-
-        return $result;
-    }
-
-    /**
-     * Initialises the parser with the given expression by setting the expression properties
-     * and restarting the parse index
-     * @param $exprToSetUp
-     */
-    function setUpParser($exprToSetUp) {
-        //set the objects expression property to the expression passed to the
-        $this->expr = $exprToSetUp;
-
-        //Set the objects expression array to the exploded expression string.
-        $this->exprArray = str_split($this->expr);
-
-        //Set the parse index of the object back to the start.
-        $this->parseIndex = 0;
-    }
-
-    /**
      * A function wrapper that tests solely the shunt function without needing to do an entire parsing process.
      * @param $expression
      * @return array
      */
-    function testShunt($expression) {
+    function testShunt($expression)
+    {
         $this->setUpParser($expression);
         $result = $this->shunt();
         return $result;
@@ -878,7 +880,8 @@ class ExprParser
      * @param $expression
      * @return BooleanExpression
      */
-    function testShuntTree($expression) {
+    function testShuntTree($expression)
+    {
         $this->setUpParser($expression);
         $result = $this->getExpressionTree();
         return $result;

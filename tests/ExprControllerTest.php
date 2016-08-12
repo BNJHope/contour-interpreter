@@ -33,7 +33,8 @@ class ExprControllerTest extends PHPUnit_Framework_TestCase
         self::$exprParseController = new ExprParserController();
     }
 
-    public function testNormalFunction(){
+    public function testNormalFunction()
+    {
         $program = "let a = #(test)
         if a < 7
         then return 9";

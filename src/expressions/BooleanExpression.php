@@ -3,11 +3,13 @@
 namespace contour\parser\expressions;
 
 use contour\parser\exceptions\ExpressionEvaluationException;
+
 /**
  * Class BooleanExpression
  * @package bnjhope\php_parser\expressions
  */
-class BooleanExpression implements iExpression {
+class BooleanExpression implements iExpression
+{
 
     /**
      * @var iExpression
@@ -27,7 +29,8 @@ class BooleanExpression implements iExpression {
      */
     private $operator;
 
-    public static function withValues(iExpression $firstExpr, iExpression $operator = null, iExpression $secondExpr = null) {
+    public static function withValues(iExpression $firstExpr, iExpression $operator = null, iExpression $secondExpr = null)
+    {
         $instance = new self();
         $instance->setFirstExpr($firstExpr);
         $instance->setOperator($operator);
@@ -97,13 +100,14 @@ class BooleanExpression implements iExpression {
      * The result from evaluating the boolean expression.
      * @throws ExpressionEvaluationException If there is an evaluation error then throw this over to the calling method.
      */
-    public function evaluate($vars){
+    public function evaluate($vars)
+    {
 
         //try and get the first side of the expression
         $leftHandSide = $this->firstExpr->evaluate($vars);
 
         //if there is only a left hand side expression
-        if($this->operator == null) {
+        if ($this->operator == null) {
 
             //return the value as a boolean expression whatever the type of the left hand side is.
             return ($leftHandSide || false);
