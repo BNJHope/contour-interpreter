@@ -25,15 +25,8 @@ class FunctionContainer
      */
     private $functionTree;
 
-    /**
-     * The variable map for the function.
-     * @var VariableMap
-     */
-    private $variableMap;
-
     public function __construct($functionTree) {
         $this->functionTree = $functionTree;
-        $this->variableMap = new VariableMap();
     }
 
     /**
@@ -51,22 +44,5 @@ class FunctionContainer
     {
         $this->functionTree = $functionTree;
     }
-
-    /**
-     * @return VariableMap
-     */
-    public function getVariableMap()
-    {
-        return $this->variableMap;
-    }
-
-    /**
-     * @param VariableMap $variableMap
-     */
-    public function setVariableMap($variableMap)
-    {
-        $this->variableMap = $variableMap;
-    }
-
 
 }

@@ -12,7 +12,6 @@ use contour\parser\exceptions\ExpressionParseException;
 use contour\parser\expressions\BooleanExpression;
 use contour\parser\expressions\iExpression;
 use contour\parser\expressions\OperationExpression;
-use contour\parser\expressions\RawValueExpression;
 
 class ExpressionTreeConstructor {
 

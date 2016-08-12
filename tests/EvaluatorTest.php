@@ -5,7 +5,6 @@ namespace contour\parser\tests;
 
 use contour\parser\evaluators\ExprEvaluator;
 use contour\parser\parsers\ExprParserController;
-use contour\parser\VariableMap;
 use PHPUnit_Framework_TestCase;
 
 class EvaluatorTest extends PHPUnit_Framework_TestCase
@@ -32,7 +31,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
             then return \"should not return\"
             else return \"should return\"");
 
-        $this->assertEquals("\"should return\"" ,self::$evaluator->evaluate($structToTest, new VariableMap(), []));
+        $this->assertEquals("\"should return\"" ,self::$evaluator->evaluate($structToTest, []));
     }
 
     public function testNormal() {
@@ -43,7 +42,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
         else if a + x = 3
         then return 0");
 
-        $result = self::$evaluator->evaluate($structToTest, new VariableMap(), [2,8]);
+        $result = self::$evaluator->evaluate($structToTest, [2,8]);
 
         $this->assertEquals(1,$result);
     }
