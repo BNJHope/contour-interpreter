@@ -11,20 +11,20 @@ Variable Declarations & Assignments:
   let name = "alice"
   
  - For a variable "cellVal" that links to the spreadsheet cell referenced as #(row, col) + 7
- let cellVal = #(row, col) + 7
+ : let cellVal = #(row, col) + 7
  
 Conditional Statements :
   -Multiline for clear understanding
   -Can use boolean operators to link statements.
   -If statements can nest
   
-  -For an if statement to see if the a string variable "name" is equal to "alice" and if so then set variable "correctName" to   true and if not then set name to the value of cell (2, name)
+  -For an if statement to see if the a string variable "name" is equal to "alice" and if so then set variable "correctName" to   true and if not then set name to the value of cell (2, name) :
    if (name = "alice")
    then let correctName = true
    else then let name = #(2, name)
   
   -Another example if statement. Notice how & and 'and' can be used in the exact same way and will produce the same result.
-  The return keyword returns the result of the function
+  The return keyword returns the result of the function :
     if (name = "alice" & age = 22)
    then return 1
    else if (name = "bob" and age = 23)
