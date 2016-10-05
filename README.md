@@ -18,17 +18,26 @@ Conditional Statements :
   -Can use boolean operators to link statements.
   -If statements can nest
   
+  - Extra whitespace between lines used for clarity on README, since parts of if statement must be separated by new line character.
   -For an if statement to see if the a string variable "name" is equal to "alice" and if so then set variable "correctName" to   true and if not then set name to the value of cell (2, name) :
+  
+  
    if (name = "alice")
+   
    then let correctName = true
+   
    else then let name = #(2, name)
   
   -Another example if statement. Notice how & and 'and' can be used in the exact same way and will produce the same result.
   The return keyword returns the result of the function :
     if (name = "alice" & age = 22)
+    
    then return 1
+   
    else if (name = "bob" and age = 23)
+   
    then return 2
+   
    else then return 0
    
 If there are any errors in the function code then it is outputted to the user, giving the type of error and the location of it also.
