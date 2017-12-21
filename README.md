@@ -33,7 +33,7 @@ This is a interpreter for the Contour project. It parses a basic function syntax
    then let correctName = true
    else then let name = #(2, name)
   ```
-  * Another example if statement. Notice how & and 'and' can be used in the exact same way and will produce the same result. The return keyword returns the result of the function :
+* Another example if statement. Notice how & and 'and' can be used in the exact same way and will produce the same result. The return keyword returns the result of the function :
   ```
     if (name = "alice" & age = 22)
    then return 1
